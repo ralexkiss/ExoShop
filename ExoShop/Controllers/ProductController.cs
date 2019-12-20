@@ -2,27 +2,30 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ExoShop.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Interfaces.Contexts;
 using Interfaces.Logic;
 using Logic.LogicObjects;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+using ExoShop.Models;
 using Models.DataModels;
 
-namespace GeoChatting.Controllers
+namespace ExoShop.Controllers
 {
-    public class AdminController : Controller
+    public class ProductController : Controller
     {
-
+        List<Product> list = new List<Product>();
         private readonly IProductLogic productLogic;
 
-        public AdminController(IProductContext context)
+        public ProductController(IProductContext context)
         {
             productLogic = new ProductLogic(context);
+            list = productLogic.GetAll();
         }
-        public ActionResult Index()
+
+        public IActionResult Index()
         {
+            ViewBag.Products = list;
             return View();
         }
 
@@ -31,9 +34,33 @@ namespace GeoChatting.Controllers
             return View();
         }
 
+        public ActionResult EditProduct(int id)
+        {
+            return View();
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult AddProduct(ProductViewModel model)
+        public IActionResult EditProduct(ProductViewModel model)
+        {
+            return View();
+        }
+
+        public ActionResult DeleteProduct(int id)
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteProduct(ProductViewModel model)
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AddProduct(ProductViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -45,10 +72,9 @@ namespace GeoChatting.Controllers
                         Description = model.Description,
                         ImageURL = model.ImageURL,
                         Price = model.Price,
-                        category = model.Category
 
                     });
-                    return RedirectToAction("Index", "Admin");
+                    return RedirectToAction("Index", "Product");
                 }
                 catch (Exception)
                 {

@@ -33,6 +33,7 @@ namespace GeoChatting
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
             services.AddSingleton<IUserContext, UserSqlContext>();
+            services.AddSingleton<IProductContext, ProductSqlContext>();
             services.AddSession();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

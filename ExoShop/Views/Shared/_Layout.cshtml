@@ -38,7 +38,7 @@
                         @if (Context.Session.GetString("admin") == "true")
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="" asp-controller="Admin" asp-action="Index">Admin Panel</a>
+                                <a class="nav-link text-white" asp-area="" asp-controller="Product" asp-action="Index">Products Panel</a>
                             </li>
                         }
                         @if (Context.Session.GetString("name") != null)

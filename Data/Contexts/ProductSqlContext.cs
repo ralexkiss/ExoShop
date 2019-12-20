@@ -17,27 +17,57 @@ namespace Data.Contexts
             throw new NotImplementedException();
         }
 
-        public List<User> GetAll()
+        public List<Product> GetAll()
         {
-            throw new NotImplementedException();
+            List<Product> products = new List<Product>();
+            try
+            {
+                using (connection = DataConnection.getConnection())
+                {
+                    connection.Open();
+                    using (MySqlCommand command = new MySqlCommand("SELECT * FROM Product", connection))
+                    {
+                        using (MySqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Product product = new Product();
+                                product.ID = (int)reader["ID"];
+                                product.Name = (string)reader["Name"];
+                                product.Description = (string)reader["Description"];
+                                product.Price = (double)reader["Price"];
+                                product.ImageURL = (string)reader["PictureURL"];
+                                products.Add(product);
+                            }
+                            return products;
+                        }
+                    }
+                }
+            }
+            catch (MySqlException)
+            {
+                throw;
+            }
         }
 
-        public User GetById(int id)
+        public Product GetById(int id)
         {
             throw new NotImplementedException();
         }
 
         public void Insert(Product product)
         {
-            throw new NotImplementedException();
             try
             {
                 using (connection = DataConnection.getConnection())
                 {
                     connection.Open();
-                    using (MySqlCommand command = new MySqlCommand("INSERT INTO Product() VALUES ()", connection))
+                    using (MySqlCommand command = new MySqlCommand("INSERT INTO Product (`Name`, `Description`, `Price`, `PictureURL`) VALUES (@Name, @Description, @Price, @PictureURL)", connection))
                     {
-                        //command.Parameters.AddWithValue();
+                        command.Parameters.AddWithValue("@Name", product.Name);
+                        command.Parameters.AddWithValue("@Description", product.Description);
+                        command.Parameters.AddWithValue("@Price", product.Price);
+                        command.Parameters.AddWithValue("@PictureURL", product.ImageURL);
                         command.ExecuteNonQuery();
                     }
                 }
@@ -48,7 +78,7 @@ namespace Data.Contexts
             }
         }
 
-        public void Update(User user)
+        public void Update(Product product)
         {
             throw new NotImplementedException();
         }

@@ -1,0 +1,27 @@
+﻿@using Models.DataModels
+@{
+    ViewData["Title"] = "Index";
+}
+<link rel="stylesheet" href="~/css/site.css" />
+
+<h4>Admin Panel</h4>
+<div>
+    <p>Wil je een nieuw product aanmaken?</p>
+    <button onclick="location.href='@Url.Action("AddProduct", "Product")'" class="mainBtn">Add Product</button>
+</div>
+@foreach (Product product in ViewBag.Products)
+{
+    <div class="container">
+            <div class="product-card">
+                <img src="@product.ImageURL" class="product-image" alt="@product.Name">
+                <h1>@product.Name</h1>
+                <p class="price">€@product.Price</p>
+                <p>@product.Description</p>
+                <p><button onclick="location.href='@Url.Action("EditProduct", "Product")'">Edit Product</button></p>
+                <p><button onclick="location.href='@Url.Action("RemoveProduct", "Product")'">Remove Product</button></p>
+            </div>
+    </div>
+}
+
+
+
