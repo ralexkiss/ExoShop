@@ -1,7 +1,17 @@
-﻿
+﻿@using Models.DataModels
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Shop";
 }
-
-<h1>Index</h1>
+@foreach (Product product in ViewBag.Products)
+{
+    <div class="container">
+        <div class="product-card">
+            <img src="@product.ImageURL" class="product-image" alt="@product.Name">
+            <h1>@product.Name</h1>
+            <p class="price">€@product.Price</p>
+            <p>@product.Description</p>
+            <p><button onclick="location.href='@Url.Action("AddToCart", "Product")'">Add to cart</button></p>
+        </div>
+    </div>
+}
 

@@ -46,15 +46,10 @@ namespace ExoShop.Controllers
             return View();
         }
 
-        public ActionResult DeleteProduct(int id)
-        {
-            return View();
-        }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteProduct(ProductViewModel model)
-        {
+        public IActionResult DeleteProduct(int id)
+        {   
             return View();
         }
 

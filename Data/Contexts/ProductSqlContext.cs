@@ -25,7 +25,7 @@ namespace Data.Contexts
                 using (connection = DataConnection.getConnection())
                 {
                     connection.Open();
-                    using (MySqlCommand command = new MySqlCommand("SELECT * FROM Product", connection))
+                    using (MySqlCommand command = new MySqlCommand("SELECT * FROM Products", connection))
                     {
                         using (MySqlDataReader reader = command.ExecuteReader())
                         {
@@ -36,7 +36,7 @@ namespace Data.Contexts
                                 product.Name = (string)reader["Name"];
                                 product.Description = (string)reader["Description"];
                                 product.Price = (double)reader["Price"];
-                                product.ImageURL = (string)reader["PictureURL"];
+                                product.ImageURL = (string)reader["ImageUrl"];
                                 products.Add(product);
                             }
                             return products;
@@ -62,12 +62,12 @@ namespace Data.Contexts
                 using (connection = DataConnection.getConnection())
                 {
                     connection.Open();
-                    using (MySqlCommand command = new MySqlCommand("INSERT INTO Product (`Name`, `Description`, `Price`, `PictureURL`) VALUES (@Name, @Description, @Price, @PictureURL)", connection))
+                    using (MySqlCommand command = new MySqlCommand("INSERT INTO Products (`Name`, `Description`, `Price`, `ImageUrl`) VALUES (@Name, @Description, @Price, @ImageUrl)", connection))
                     {
                         command.Parameters.AddWithValue("@Name", product.Name);
                         command.Parameters.AddWithValue("@Description", product.Description);
                         command.Parameters.AddWithValue("@Price", product.Price);
-                        command.Parameters.AddWithValue("@PictureURL", product.ImageURL);
+                        command.Parameters.AddWithValue("@ImageUrl", product.ImageURL);
                         command.ExecuteNonQuery();
                     }
                 }
