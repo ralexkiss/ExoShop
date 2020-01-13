@@ -29,11 +29,6 @@ namespace ExoShop.Controllers
             return View();
         }
 
-        public ActionResult AddProduct()
-        {
-            return View();
-        }
-
         public ActionResult EditProduct(int id)
         {
             return View();
@@ -41,7 +36,7 @@ namespace ExoShop.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult EditProduct(ProductViewModel model)
+        public IActionResult EditProduct(int id, ProductViewModel model)
         {
             return View();
         }
@@ -49,7 +44,20 @@ namespace ExoShop.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteProduct(int id)
-        {   
+        {
+            try
+            {
+                productLogic.Delete(id);
+                return RedirectToAction("Index", "Product");
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Index", "Product");
+            }
+        }
+
+        public ActionResult AddProduct()
+        {
             return View();
         }
 

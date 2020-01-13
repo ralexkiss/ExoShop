@@ -1,4 +1,4 @@
-﻿using Exceptions.User;
+﻿ using Exceptions.User;
 using Interfaces.Contexts;
 using Models.DataModels;
 using MySql.Data.MySqlClient;
@@ -14,7 +14,22 @@ namespace Data.Contexts
 
         public void Delete(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                using (connection = DataConnection.getConnection())
+                {
+                    connection.Open();
+                    using (MySqlCommand command = new MySqlCommand("DELETE FROM Products WHERE ID=@ProductID", connection))
+                    {
+                        command.Parameters.AddWithValue("@ProductID", id);
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public List<Product> GetAll()
@@ -25,18 +40,20 @@ namespace Data.Contexts
                 using (connection = DataConnection.getConnection())
                 {
                     connection.Open();
-                    using (MySqlCommand command = new MySqlCommand("SELECT * FROM Products", connection))
+                    using (MySqlCommand command = new MySqlCommand("SELECT * FROM Products ORDER BY Price DESC", connection))
                     {
                         using (MySqlDataReader reader = command.ExecuteReader())
                         {
                             while (reader.Read())
                             {
-                                Product product = new Product();
-                                product.ID = (int)reader["ID"];
-                                product.Name = (string)reader["Name"];
-                                product.Description = (string)reader["Description"];
-                                product.Price = (double)reader["Price"];
-                                product.ImageURL = (string)reader["ImageUrl"];
+                                Product product = new Product
+                                {
+                                    ID = (int)reader["ID"],
+                                    Name = (string)reader["Name"],
+                                    Description = (string)reader["Description"],
+                                    Price = (double)reader["Price"],
+                                    ImageURL = (string)reader["ImageUrl"]
+                                };
                                 products.Add(product);
                             }
                             return products;

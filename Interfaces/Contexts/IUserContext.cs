@@ -7,6 +7,10 @@ namespace Interfaces.Contexts
     /// </summary>
     public interface IUserContext : IContext<User>
     {
-        User AuthenticatUser(string email, string password);
+        User GetUserByid(int id);
+        User Login(string email, string password);
+        void Register(User user);
+        void AddToWishList(Product product, User user);
+        void RemoveFromWishList(Product product, User user);
     }
 }

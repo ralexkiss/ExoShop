@@ -17,14 +17,15 @@ namespace Logic.LogicObjects
             UserRepository = new UserRepository(context);
         }
 
-        public User AuthenticateUser(string email, string password)
+        public User Login(string email, string password)
         {
-            return UserRepository.AuthenticateUser(email, new Hasher().GetSha256FromString(password));
+            return UserRepository.Login(email, new Hasher().GetSha256FromString(password));
         }
 
-        public void Delete(int id)
+        public void Register(User user)
         {
-            UserRepository.Delete(id);
+            user.Password = new Hasher().GetSha256FromString(user.Password);
+            UserRepository.Insert(user);
         }
 
         public List<User> GetAll()
@@ -32,20 +33,9 @@ namespace Logic.LogicObjects
             return UserRepository.GetAll();
         }
 
-        public User GetByid(int id)
+        public User GetUserByid(int id)
         {
             return UserRepository.GetById(id);
-        }
-
-        public void Insert(User user)
-        {
-            user.Password = new Hasher().GetSha256FromString(user.Password);
-            UserRepository.Insert(user);
-        }
-
-        public void Update(User user)
-        {
-            UserRepository.Update(user);
         }
     }
 }

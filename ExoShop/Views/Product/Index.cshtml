@@ -12,14 +12,15 @@
 @foreach (Product product in ViewBag.Products)
 {
     <div class="container">
-            <div class="product-card">
-                <img src="@product.ImageURL" class="product-image" alt="@product.Name">
-                <h1 id="@product.ID">@product.Name</h1>
-                <p class="price">€@product.Price</p>
-                <p>@product.Description</p>
-                <p><button onclick="location.href='@Url.Action("EditProduct", "Product")'">Edit Product</button></p>
-                <p><button onclick="location.href='@Url.Action("RemoveProduct", "Product")'">Remove Product</button></p>
-            </div>
+        <div class="product-card">
+            <img src="@product.ImageURL" class="product-image" alt="@product.Name">
+            <h1 id="@product.ID">@product.Name</h1>
+            <p class="price">€@product.Price</p>
+            <p>@product.Description</p>
+            <p><button type="submit" class="btn btn-danger" onclick="location.href='@Url.Action("EditProduct", "Product", new { id = product.ID })'">Edit Product</button></p>
+            <p><button type="submit" class="btn btn-danger" onclick="location.href='@Url.Action("DeleteProduct", "Product", new { id = product.ID })'">Delete Product</button></p>
+
+        </div>
     </div>
 }
 

@@ -7,6 +7,19 @@ a.navbar-brand {
     word-break: break-all;
 }
 
+.navbar-nav {
+    display: block;
+}
+
+.nav-floatleft {
+    float: left;
+}
+
+.nav-floatright {
+    float: right;
+}
+
+
 /* Sticky footer styles
 -------------------------------------------------- */
 html {

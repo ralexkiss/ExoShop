@@ -12,7 +12,7 @@ namespace Data.Contexts
     {
         private MySqlConnection connection;
 
-        public User AuthenticatUser(string email, string password)
+        public User Login(string email, string password)
         {
             try
             {
@@ -47,22 +47,7 @@ namespace Data.Contexts
             }
         }
 
-        public void Delete(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<User> GetAll()
-        {
-            throw new NotImplementedException();
-        }
-
-        public User GetById(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Insert(User user)
+        public void Register(User user)
         {
             try
             {
@@ -82,11 +67,6 @@ namespace Data.Contexts
             {
                 throw new RegistrationFailedException();
             }
-        }
-
-        public void Update(User user)
-        {
-            throw new NotImplementedException();
         }
     }
 }

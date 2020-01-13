@@ -19,6 +19,11 @@ namespace GeoChatting.Controllers
             UserLogic = new UserLogic(context);
         }
 
+        public IActionResult Index()
+        {
+            return HttpContext.Session.GetString("name") != null ? View() : (IActionResult)RedirectToAction("SignIn", "User");
+        }
+
         public ActionResult SignIn()
         {
             return View();
@@ -75,6 +80,15 @@ namespace GeoChatting.Controllers
                 }
             }
             return View();
+        }
+
+        [HttpGet]
+        public IActionResult SignOut()
+        {
+            HttpContext.Session.SetInt32("id", 0);
+            HttpContext.Session.SetString("name", string.Empty);
+            HttpContext.Session.SetString("admin", "false");
+            return RedirectToAction("Index", "Home");
         }
     }
 }
