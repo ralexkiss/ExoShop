@@ -1,7 +1,84 @@
-﻿
+﻿@model ExoShop.Models.RegisterViewModel
+@using Models.DataModels
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Account";
 }
-
-<h1>Account</h1>
-
+<h2>Account</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <section>
+            <form method="post">
+                <h4>Login and security</h4>
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Email"></label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Name"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Password"></label>
+                    <input asp-for="Password" class="form-control" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ConfirmPassword"></label>
+                    <input asp-for="ConfirmPassword" class="form-control" />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+                <button type="submit" class="mainBtn">Edit</button>
+            </form>
+        </section>
+    </div>
+</div>
+<hr />
+<h4>Wishes</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Descripion
+            </th>
+            <th>
+                Price
+            </th>
+            <th>
+                Action
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Product product in ViewBag.Wishes)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => product.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => product.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => product.Price)
+            </td>
+            <td>
+                <form asp-action="RemoveFromWishes">
+                    <button type="submit" method="post" class="mainBtn" asp-controller="Wish"
+                    asp-action="RemoveFromWishes" asp-route-id="@product.ID">Remove 
+                    </button>
+                </form>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+<hr />
+<h4>Orders</h4>

@@ -16,6 +16,20 @@ namespace ExoShop
             session.SetString(key, JsonConvert.SerializeObject(value));
         }
 
+        public static bool ContainsObject(this ISession session, string key)
+        {
+            var data = session.Get(key);
+            if (data == null)
+            {
+                return false;
+            }
+            return true;
+        }
+        public static void DeleteObject(this ISession session, string key)
+        {
+            session.Remove(key);
+        }
+
         public static T GetObject<T>(this ISession session, string key)
         {
             var value = session.GetString(key);

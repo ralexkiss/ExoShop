@@ -230,6 +230,10 @@ p {
     color: orange;
 }
 
+.red {
+    color: red;
+}
+
 .invoice-box {
     max-width: 800px;
     margin: auto;

@@ -1,5 +1,5 @@
 ﻿@model IEnumerable<ExoShop.Models.ProductViewModel>
-
+@using Models.DataModels
 @{
     ViewData["Title"] = "Index";
 }
@@ -21,17 +21,17 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (Product product in ViewBag.Cart)
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Name)
+                    @Html.DisplayFor(modelItem => product.Name)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Description)
+                    @Html.DisplayFor(modelItem => product.Description)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Price)
+                    @Html.DisplayFor(modelItem => product.Price)
                 </td>
             </tr>
         }
@@ -39,6 +39,7 @@
 </table>
 <form asp-action="Checkout">
     <button type="submit" class="mainBtn" asp-controller="Shop"
-            asp-action="Checkout">Checkout
+            asp-action="Checkout">
+        Checkout
     </button>
 </form>

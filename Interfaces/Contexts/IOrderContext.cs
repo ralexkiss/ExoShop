@@ -9,7 +9,6 @@ namespace Interfaces.Contexts
     public interface IOrderContext
     {
         List<Order> GetAllOrdersByUser(User user);
-        Order GetOrderById(int id);
         void AddOrder(Order order);
         void DeleteOrder(Order order);
     }

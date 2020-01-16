@@ -10,31 +10,23 @@ using Models.DataModels;
 
 namespace ExoShop.Controllers
 {
-    public class CartController : Controller
+    public class WishController : Controller
     {
         private readonly IProductLogic productLogic;
-        private readonly ICartLogic cartLogic;
+        private readonly IWishLogic wishLogic;
 
-        public CartController(IProductContext productContext, ICartContext cartContext)
+        public WishController(IProductContext productContext, IWishContext wishContext)
         {
             productLogic = new ProductLogic(productContext);
-            cartLogic = new CartLogic(cartContext);
+            wishLogic = new WishLogic(wishContext);
         }
-
-        public IActionResult Index()
-        {
-            User loggedInUser = HttpContext.Session.GetObject<User>("loggedInUser");
-            ViewBag.Cart = cartLogic.GetCartByUser(loggedInUser);
-            return View();
-        }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult AddToCart(int id)
+        public IActionResult AddToWishes(int id)
         {
             User loggedInUser = HttpContext.Session.GetObject<User>("loggedInUser");
-            cartLogic.AddToCart(productLogic.GetProductById(id),loggedInUser);
+            wishLogic.AddToWishList(productLogic.GetProductById(id),loggedInUser);
             HttpContext.Session.SetObject("loggedInUser", loggedInUser);
             return RedirectToAction("Index", "Shop");
         }
@@ -42,12 +34,12 @@ namespace ExoShop.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult RemoveFromCart(int id)
+        public IActionResult RemoveFromWishes(int id)
         {
             User loggedInUser = HttpContext.Session.GetObject<User>("loggedInUser");
-            cartLogic.RemoveFromCart(productLogic.GetProductById(id), loggedInUser);    
+            wishLogic.RemoveFromWishList(productLogic.GetProductById(id), loggedInUser);    
             HttpContext.Session.SetObject("loggedInUser", loggedInUser);
-            return RedirectToAction("Index", "Cart");
+            return RedirectToAction("Index", "User");
         }
     }
 }

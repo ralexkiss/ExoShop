@@ -18,11 +18,17 @@ namespace ExoShop.Controllers
 
         private readonly IProductLogic productLogic;
         private readonly IReviewLogic reviewLogic;
+        private readonly IOrderLogic orderLogic;
+        private readonly IBillingLogic billingLogic;
 
-        public ShopController(IProductContext productContext, IReviewContext reviewContext)
+
+        public ShopController(IProductContext productContext, IReviewContext reviewContext, IOrderContext orderContext, IBillingContext billingContext)
         {
             productLogic = new ProductLogic(productContext);
             reviewLogic = new ReviewLogic(reviewContext);
+            orderLogic = new OrderLogic(orderContext);
+            billingLogic = new BillingLogic(billingContext);
+
             products = productLogic.GetAll();
             foreach(Product product in products)
             {
@@ -33,13 +39,19 @@ namespace ExoShop.Controllers
 
         public IActionResult Index()
         {
+            User loggedInUser = HttpContext.Session.GetObject<User>("loggedInUser");
             ViewBag.Products = products;
-            return View();
+            return String.IsNullOrEmpty(loggedInUser.Name) ? (IActionResult)RedirectToAction("SignIn", "User") : View();
         }
 
         public IActionResult Checkout()
         {
-            return View();
+            User loggedInUser = HttpContext.Session.GetObject<User>("loggedInUser");
+            if (loggedInUser.Cart.Count >= 1)
+            {
+                return View();
+            }
+            return RedirectToAction("Index", "Shop");
         }
 
         [HttpPost]
@@ -59,6 +71,18 @@ namespace ExoShop.Controllers
                         Address = billingViewModel.Address,
                         City = billingViewModel.City
                     };
+
+                    Order order = new Order
+                    {
+                        User = loggedInUser,
+                        Billing = billing,
+                        Products = loggedInUser.Cart,
+                        Status = "Complete",
+                        Date = DateTime.Now
+                    };
+                    billingLogic.AddBilling(billing);
+                    orderLogic.AddOrder(order);
+
                     ViewBag.Products = loggedInUser.Cart;
                     ViewBag.Billing = billing;
                     ViewBag.TotalPrice = loggedInUser.Cart.Sum(product => product.Price);

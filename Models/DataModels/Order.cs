@@ -7,9 +7,10 @@ namespace Models.DataModels
     public class Order
     {
         public int ID { get; set; }
-        public User user { get; set; }
-        public Billing billing { get; set; }
-        public DateTime date { get; set; }
+        public List<Product> Products { get; set; }
+        public User User { get; set; }
+        public Billing Billing { get; set; }
+        public DateTime Date { get; set; }
         public string Status { get; set; }
 
     }

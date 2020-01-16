@@ -11,7 +11,6 @@ namespace Interfaces.Logic
     public interface IOrderLogic
     {
         List<Order> GetAllOrdersByUser(User user);
-        Order GetOrderById(int id);
         void AddOrder(Order order);
         void DeleteOrder(Order order);
     }

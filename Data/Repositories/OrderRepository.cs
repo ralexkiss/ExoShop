@@ -14,11 +14,6 @@ namespace Data.Repositories
             Context = context;
         }
 
-        public Order GetOrderById(int id)
-        {
-            return Context.GetOrderById(id);
-        }
-
         public void AddOrder(Order order)
         {
             Context.AddOrder(order);

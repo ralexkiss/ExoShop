@@ -15,16 +15,21 @@ namespace ExoShop.Controllers
     {
         private readonly IUserLogic userLogic;
         private readonly IWishLogic wishLogic;
+        private readonly IOrderLogic orderLogic;
 
-        public UserController(IUserContext userContext, IWishContext wishContext)
+        public UserController(IUserContext userContext, IWishContext wishContext, IOrderContext orderContext)
         {
             userLogic = new UserLogic(userContext);
             wishLogic = new WishLogic(wishContext);
+            orderLogic = new OrderLogic(orderContext);
         }
 
         public IActionResult Index()
         {
             User loggedInUser = HttpContext.Session.GetObject<User>("loggedInUser");
+            ViewBag.User = loggedInUser;
+            ViewBag.Orders = orderLogic.GetAllOrdersByUser(loggedInUser);
+            ViewBag.Wishes = wishLogic.GetWishesByUser(loggedInUser);
             return String.IsNullOrEmpty(loggedInUser.Name) ? (IActionResult)RedirectToAction("SignIn", "User") : View();
         }
 
@@ -48,11 +53,12 @@ namespace ExoShop.Controllers
                 {
                     User loggedInUser = userLogic.Login(user.Email, user.Password);
                     loggedInUser.WishList = wishLogic.GetWishesByUser(loggedInUser);
+                    HttpContext.Session.DeleteObject("loggedInUser");
                     HttpContext.Session.SetInt32("id", loggedInUser.ID);
                     HttpContext.Session.SetString("name", loggedInUser.Name);
                     HttpContext.Session.SetString("admin", loggedInUser.IsAdmin.ToString().ToLower());
                     HttpContext.Session.SetObject("loggedInUser", loggedInUser);
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "User");
                 }
                 catch (Exception)
                 {
@@ -93,7 +99,7 @@ namespace ExoShop.Controllers
             HttpContext.Session.SetInt32("id", 0);
             HttpContext.Session.SetString("name", string.Empty);
             HttpContext.Session.SetString("admin", "false");
-            HttpContext.Session.SetObject("loggedInUser", null);
+            HttpContext.Session.DeleteObject("loggedInUser");
             return RedirectToAction("Index", "Home");
         }
     }

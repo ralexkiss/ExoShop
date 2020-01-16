@@ -44,25 +44,28 @@ namespace ExoShop.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult EditProduct(int id, ProductViewModel model)
         {
-
-            if (ModelState.IsValid)
+            User loggedInUser = HttpContext.Session.GetObject<User>("loggedInUser");
+            if (loggedInUser.IsAdmin)
             {
-                try
+                if (ModelState.IsValid)
                 {
-                    productLogic.EditProduct(new Product
+                    try
                     {
-                        ID = id,
-                        Name = model.Name,
-                        Description = model.Description,
-                        ImageURL = model.ImageURL,
-                        Price = model.Price,
+                        productLogic.EditProduct(new Product
+                        {
+                            ID = id,
+                            Name = model.Name,
+                            Description = model.Description,
+                            ImageURL = model.ImageURL,
+                            Price = model.Price,
 
-                    });
-                    return RedirectToAction("ProductPanel", "Product");
-                }
-                catch(Exception)
-                {
-                    return RedirectToAction("ProductPanel", "Product");
+                        });
+                        return RedirectToAction("ProductPanel", "Product");
+                    }
+                    catch (Exception)
+                    {
+                        return RedirectToAction("ProductPanel", "Product");
+                    }
                 }
             }
             return View();
@@ -72,47 +75,61 @@ namespace ExoShop.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteProduct(int id)
         {
-            try
+            User loggedInUser = HttpContext.Session.GetObject<User>("loggedInUser");
+            if (loggedInUser.IsAdmin)
             {
-                Product product = new Product
+                try
                 {
-                    ID = id
-                };
-                productLogic.RemoveProduct(product);
-                return RedirectToAction("ProductPanel", "Product");
+                    Product product = new Product
+                    {
+                        ID = id
+                    };
+                    productLogic.RemoveProduct(product);
+                    return RedirectToAction("ProductPanel", "Product");
+                }
+                catch (Exception)
+                {
+                    return RedirectToAction("ProductPanel", "Product");
+                }
             }
-            catch (Exception)
-            {
-                return RedirectToAction("ProductPanel", "Product");
-            }
+            return RedirectToAction("ProductPanel", "Product");
         }
 
         public ActionResult AddProduct()
         {
-            return View();
+            User loggedInUser = HttpContext.Session.GetObject<User>("loggedInUser");
+            if (loggedInUser.IsAdmin)
+            {
+                return View();
+            }
+            return RedirectToAction("ProductPanel", "Product");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult AddProduct(ProductViewModel model)
         {
-            if (ModelState.IsValid)
+            User loggedInUser = HttpContext.Session.GetObject<User>("loggedInUser");
+            if (loggedInUser.IsAdmin)
             {
-                try
+                if (ModelState.IsValid)
                 {
-                    productLogic.AddProduct(new Product
+                    try
                     {
-                        Name = model.Name,
-                        Description = model.Description,
-                        ImageURL = model.ImageURL,
-                        Price = model.Price,
+                        productLogic.AddProduct(new Product
+                        {
+                            Name = model.Name,
+                            Description = model.Description,
+                            ImageURL = model.ImageURL,
+                            Price = model.Price,
 
-                    });
-                    return RedirectToAction("Index", "Product");
-                }
-                catch (Exception)
-                {
-                    return View();
+                        });
+                        return RedirectToAction("Index", "Product");
+                    }
+                    catch (Exception)
+                    {
+                        return View();
+                    }
                 }
             }
             return View();

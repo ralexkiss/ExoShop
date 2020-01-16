@@ -27,6 +27,13 @@
                     Add to Cart <i class="fa fa-cart-plus"></i>
                 </button>
             </form>
+            <br />
+            <form asp-action="AddToWishes">
+                <button type="submit" method="post" class="btn btn-danger" asp-controller="Wish"
+                        asp-action="AddToWishes" asp-route-id="@product.ID">
+                    Add to WishList <i class="fa fa-heart red"></i>
+                </button>
+            </form>
         </div>
     </div>
 }

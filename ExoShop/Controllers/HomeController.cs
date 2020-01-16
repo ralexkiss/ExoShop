@@ -14,14 +14,17 @@ namespace ExoShop.Controllers
     {
         public IActionResult Index()
         {
-            User tempUser = new User
+            if (!HttpContext.Session.ContainsObject("loggedInUser"))
             {
-                Name = "",
-                IsAdmin = false,
-                WishList = new List<Product>(),
-                Cart = new List<Product>()
-            };
-            HttpContext.Session.SetObject("loggedInUser", tempUser);
+                User tempUser = new User
+                {
+                    Name = "",
+                    IsAdmin = false,
+                    WishList = new List<Product>(),
+                    Cart = new List<Product>()
+                };
+                HttpContext.Session.SetObject("loggedInUser", tempUser);
+            }
             return View();
         }
 
