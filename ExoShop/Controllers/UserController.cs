@@ -1,6 +1,6 @@
 ﻿using Exceptions.User;
 using ExoShop;
-using GeoChatting.Models;
+using ExoShop.Models;
 using Interfaces.Contexts;
 using Interfaces.Logic;
 using Logic.LogicObjects;
@@ -9,15 +9,17 @@ using Microsoft.AspNetCore.Mvc;
 using Models.DataModels;
 using System;
 
-namespace GeoChatting.Controllers
+namespace ExoShop.Controllers
 {
     public class UserController : Controller
     {
-        private readonly IUserLogic UserLogic;
+        private readonly IUserLogic userLogic;
+        private readonly IWishLogic wishLogic;
 
-        public UserController(IUserContext context)
+        public UserController(IUserContext userContext, IWishContext wishContext)
         {
-            UserLogic = new UserLogic(context);
+            userLogic = new UserLogic(userContext);
+            wishLogic = new WishLogic(wishContext);
         }
 
         public IActionResult Index()
@@ -44,14 +46,15 @@ namespace GeoChatting.Controllers
             {
                 try
                 {
-                    User local = UserLogic.Login(user.Email, user.Password);
-                    HttpContext.Session.SetInt32("id", local.ID);
-                    HttpContext.Session.SetString("name", local.Name);
-                    HttpContext.Session.SetString("admin", local.IsAdmin.ToString().ToLower());
-                    HttpContext.Session.SetObject("loggedInUser", local);
+                    User loggedInUser = userLogic.Login(user.Email, user.Password);
+                    loggedInUser.WishList = wishLogic.GetWishesByUser(loggedInUser);
+                    HttpContext.Session.SetInt32("id", loggedInUser.ID);
+                    HttpContext.Session.SetString("name", loggedInUser.Name);
+                    HttpContext.Session.SetString("admin", loggedInUser.IsAdmin.ToString().ToLower());
+                    HttpContext.Session.SetObject("loggedInUser", loggedInUser);
                     return RedirectToAction("Index", "Home");
                 }
-                catch (AddingProductFailedException)
+                catch (Exception)
                 {
                     ModelState.AddModelError("", "The email or password provided is incorrect.");
                     return View();
@@ -68,7 +71,7 @@ namespace GeoChatting.Controllers
             {
                 try
                 {
-                    UserLogic.Register(new User
+                    userLogic.Register(new User
                     {
                         Email = user.Email,
                         Name = user.Name,

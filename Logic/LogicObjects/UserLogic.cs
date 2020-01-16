@@ -37,15 +37,5 @@ namespace Logic.LogicObjects
         {
             UserRepository.EditUser(user);
         }
-
-        public void AddToWishList(Product product, User user)
-        {
-            UserRepository.AddToWishList(product, user);
-        }
-
-        public void RemoveFromWishList(Product product, User user)
-        {
-            UserRepository.RemoveFromWishList(product, user);
-        }
     }
 }

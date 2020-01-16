@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GeoChatting.Models
+namespace ExoShop.Models
 {
     public class LoginViewModel
     {

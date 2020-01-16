@@ -39,6 +39,7 @@ namespace Data.Contexts
                                 user.ID = (int)reader["ID"];
                                 user.Name = (string)reader["Name"];
                                 user.IsAdmin = (bool)reader["IsAdmin"];
+                                user.Cart = new List<Product>();
                                 return user;
                             }
                         }
@@ -75,16 +76,6 @@ namespace Data.Contexts
         }
 
         public void EditUser(User user)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void AddToWishList(Product product, User user)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void RemoveFromWishList(Product product, User user)
         {
             throw new NotImplementedException();
         }

@@ -23,22 +23,48 @@ namespace ExoShop.Controllers
             products = productLogic.GetAll();
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int id)
         {
             ViewBag.Products = products;
             return View();
         }
 
-        public ActionResult EditProduct(int id)
+        public IActionResult ProductPanel()
         {
-            ViewBag.Product = products.Find(product => product.ID == id);
-            return View();
+            User loggedInUser = HttpContext.Session.GetObject<User>("loggedInUser");
+            if (loggedInUser.IsAdmin)
+            {
+                ViewBag.Products = products;
+                return View();
+            }
+            return RedirectToAction("Index", "Shop");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult EditProduct(int id, ProductViewModel model)
         {
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    productLogic.EditProduct(new Product
+                    {
+                        ID = id,
+                        Name = model.Name,
+                        Description = model.Description,
+                        ImageURL = model.ImageURL,
+                        Price = model.Price,
+
+                    });
+                    return RedirectToAction("ProductPanel", "Product");
+                }
+                catch(Exception)
+                {
+                    return RedirectToAction("ProductPanel", "Product");
+                }
+            }
             return View();
         }
 
@@ -53,11 +79,11 @@ namespace ExoShop.Controllers
                     ID = id
                 };
                 productLogic.RemoveProduct(product);
-                return RedirectToAction("Index", "Product");
+                return RedirectToAction("ProductPanel", "Product");
             }
             catch (Exception)
             {
-                return RedirectToAction("Index", "Product");
+                return RedirectToAction("ProductPanel", "Product");
             }
         }
 

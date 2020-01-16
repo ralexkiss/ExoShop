@@ -1,12 +1,12 @@
-﻿@{
+﻿@model ExoShop.Models.CheckoutViewModel
+@{
     ViewData["Title"] = "Checkout";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@model ExoShop.Models.CheckoutViewModel
 <div class="row">
     <div class="container">
         <div class="col-50">
-            <form asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
+            <form asp-action="Payment" method="post">
                 <h4>Billing Address</h4>
                 <hr />
                 <div asp-validation-summary="All" class="text-danger"></div>

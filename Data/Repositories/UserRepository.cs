@@ -32,15 +32,5 @@ namespace Data.Repositories
         {
             Context.EditUser(user);
         }
-
-        public void AddToWishList(Product product, User user)
-        {
-            Context.AddToWishList(product, user);
-        }
-
-        public void RemoveFromWishList(Product product, User user)
-        {
-            Context.RemoveFromWishList(product, user);
-        }
     }
 }

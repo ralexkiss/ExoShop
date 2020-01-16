@@ -4,14 +4,24 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using GeoChatting.Models;
+using ExoShop.Models;
+using Models.DataModels;
+using ExoShop;
 
-namespace GeoChatting.Controllers
+namespace ExoShop.Controllers
 {
     public class HomeController : Controller
     {
         public IActionResult Index()
         {
+            User tempUser = new User
+            {
+                Name = "",
+                IsAdmin = false,
+                WishList = new List<Product>(),
+                Cart = new List<Product>()
+            };
+            HttpContext.Session.SetObject("loggedInUser", tempUser);
             return View();
         }
 

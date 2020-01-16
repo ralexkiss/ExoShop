@@ -82,7 +82,25 @@ namespace Data.Contexts
         }
         public void AddReview(Review review)
         {
-            throw new NotImplementedException();
+            try
+            {
+                using (connection = DataConnection.getConnection())
+                {
+                    connection.Open();
+                    using (MySqlCommand command = new MySqlCommand("INSERT INTO Reviews(UserID, ProductID, Stars, Review) VALUES (@UserID,@ProductID,@Stars,@Message)", connection))
+                    {
+                        command.Parameters.AddWithValue("@UserID", review.UserID);
+                        command.Parameters.AddWithValue("@ProductID", review.ProductID);
+                        command.Parameters.AddWithValue("@Stars", review.Stars);
+                        command.Parameters.AddWithValue("@Message", review.Message);
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public void RemoveReview(Review review)

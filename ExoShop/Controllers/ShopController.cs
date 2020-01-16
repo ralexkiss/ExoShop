@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ExoShop;
+using ExoShop.Models;
 using Interfaces.Contexts;
 using Interfaces.Logic;
 using Logic.LogicObjects;
 using Microsoft.AspNetCore.Mvc;
 using Models.DataModels;
 
-namespace GeoChatting.Controllers
+namespace ExoShop.Controllers
 {
     public class ShopController : Controller
     {
@@ -16,12 +18,10 @@ namespace GeoChatting.Controllers
 
         private readonly IProductLogic productLogic;
         private readonly IReviewLogic reviewLogic;
-        private readonly ICartLogic cartLogic;
 
-        public ShopController(IProductContext productContext, ICartContext cartContext, IReviewContext reviewContext)
+        public ShopController(IProductContext productContext, IReviewContext reviewContext)
         {
             productLogic = new ProductLogic(productContext);
-            cartLogic = new CartLogic(cartContext);
             reviewLogic = new ReviewLogic(reviewContext);
             products = productLogic.GetAll();
             foreach(Product product in products)
@@ -42,9 +42,34 @@ namespace GeoChatting.Controllers
             return View();
         }
 
-        public IActionResult Payment()
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Payment(CheckoutViewModel billingViewModel)
         {
-            return View();
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    User loggedInUser = HttpContext.Session.GetObject<User>("loggedInUser");
+                    Billing billing = new Billing
+                    {
+                        FirstName = billingViewModel.FirstName,
+                        LastName = billingViewModel.LastName,
+                        PhoneNumber = billingViewModel.PhoneNumber,
+                        Address = billingViewModel.Address,
+                        City = billingViewModel.City
+                    };
+                    ViewBag.Products = loggedInUser.Cart;
+                    ViewBag.Billing = billing;
+                    ViewBag.TotalPrice = loggedInUser.Cart.Sum(product => product.Price);
+                    return View();
+                } 
+                catch
+                {
+
+                }
+            }
+            return RedirectToAction("Checkout", "Shop");   
         }
     }
 }

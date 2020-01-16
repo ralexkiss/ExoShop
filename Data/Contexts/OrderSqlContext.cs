@@ -8,19 +8,25 @@ using System.Data;
 
 namespace Data.Contexts
 {
-    public class BillingMemoryContext : IBillingContext
+    public class OrderSqlContext : IOrderContext
     {
-        public Billing GetBillingById(int id)
+        private MySqlConnection connection;
+        public List<Order> GetAllOrdersByUser(User user)
         {
             throw new NotImplementedException();
         }
 
-        public void AddBilling(Billing billing)
+        public Order GetOrderById(int id)
         {
             throw new NotImplementedException();
         }
 
-        public void RemoveBilling(Billing billing)
+        public void AddOrder(Order order)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteOrder(Order order)
         {
             throw new NotImplementedException();
         }

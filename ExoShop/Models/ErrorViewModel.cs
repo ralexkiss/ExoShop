@@ -1,6 +1,6 @@
 using System;
 
-namespace GeoChatting.Models
+namespace ExoShop.Models
 {
     public class ErrorViewModel
     {

@@ -30,8 +30,10 @@ namespace ExoShop
             services.AddSingleton<IUserContext, UserSqlContext>();
             services.AddSingleton<IProductContext, ProductSqlContext>();
             services.AddSingleton<IReviewContext, ReviewSqlContext>();
-            services.AddSingleton<IBillingContext, BillingMemoryContext>();
+            services.AddSingleton<IBillingContext, BillingSqlContext>();
             services.AddSingleton<ICartContext, CartMemoryContext>();
+            services.AddSingleton<IWishContext, WishSqlContext>();
+            services.AddSingleton<IOrderContext, OrderSqlContext>();
             services.AddSession();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

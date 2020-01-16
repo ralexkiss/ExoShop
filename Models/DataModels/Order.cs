@@ -9,6 +9,7 @@ namespace Models.DataModels
         public int ID { get; set; }
         public User user { get; set; }
         public Billing billing { get; set; }
+        public DateTime date { get; set; }
         public string Status { get; set; }
 
     }

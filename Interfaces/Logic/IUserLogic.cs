@@ -13,8 +13,5 @@ namespace Interfaces.Logic
         User Login(string email, string password);
         void Register(User user);
         void EditUser(User user);
-        void AddToWishList(Product product, User user);
-        void RemoveFromWishList(Product product, User user);
-
     }
 }
