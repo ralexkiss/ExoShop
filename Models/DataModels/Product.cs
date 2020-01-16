@@ -1,4 +1,6 @@
-﻿namespace Models.DataModels
+﻿using System.Collections.Generic;
+
+namespace Models.DataModels
 {
     public class Product
     {
@@ -7,6 +9,6 @@
         public string Name { get; set; }
         public string Description { get; set; }
         public double Price { get; set; }
-        public string category { get; set; }
+        public List<Review> reviews { get; set; }
     }
 }

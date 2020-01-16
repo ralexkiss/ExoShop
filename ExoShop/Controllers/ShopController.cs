@@ -15,11 +15,19 @@ namespace GeoChatting.Controllers
         List<Product> products = new List<Product>();
 
         private readonly IProductLogic productLogic;
+        private readonly IReviewLogic reviewLogic;
+        private readonly ICartLogic cartLogic;
 
-        public ShopController(IProductContext context)
+        public ShopController(IProductContext productContext, ICartContext cartContext, IReviewContext reviewContext)
         {
-            productLogic = new ProductLogic(context);
+            productLogic = new ProductLogic(productContext);
+            cartLogic = new CartLogic(cartContext);
+            reviewLogic = new ReviewLogic(reviewContext);
             products = productLogic.GetAll();
+            foreach(Product product in products)
+            {
+                product.reviews = reviewLogic.GetAllByProduct(product);
+            }
         }
 
 
@@ -29,8 +37,12 @@ namespace GeoChatting.Controllers
             return View();
         }
 
-
         public IActionResult Checkout()
+        {
+            return View();
+        }
+
+        public IActionResult Payment()
         {
             return View();
         }

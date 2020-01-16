@@ -13,30 +13,29 @@ namespace Data.Repositories
         {
             Context = context;
         }
-
-        public void Delete(int id)
-        {
-            Context.Delete(id);
-        }
-
         public List<Product> GetAll()
         {
             return Context.GetAll();
         }
 
-        public Product GetById(int id)
+        public Product GetProductById(int id)
         {
-            return Context.GetById(id);
+            return Context.GetProductById(id);
         }
 
-        public void Insert(Product product)
+        public void AddProduct(Product product)
         {
-            Context.Insert(product);
+            Context.AddProduct(product);
         }
 
-        public void Update(Product product)
+        public void EditProduct(Product product)
         {
-            Context.Update(product);
+            Context.EditProduct(product);
+        }
+
+        public void RemoveProduct(Product product)
+        {
+            Context.RemoveProduct(product);
         }
     }
 }

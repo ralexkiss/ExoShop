@@ -12,6 +12,11 @@ namespace Data.Contexts
     {
         private MySqlConnection connection;
 
+        public User GetUserById(int id)
+        {
+            throw new NotImplementedException();
+        }
+
         public User Login(string email, string password)
         {
             try
@@ -37,13 +42,13 @@ namespace Data.Contexts
                                 return user;
                             }
                         }
-                        throw new AuthenticationFailedException();
+                        throw new AddingProductFailedException();
                     }
                 }
             }
             catch (MySqlException)
             {
-                throw new AuthenticationFailedException();
+                throw new AddingProductFailedException();
             }
         }
 
@@ -67,6 +72,21 @@ namespace Data.Contexts
             {
                 throw new RegistrationFailedException();
             }
+        }
+
+        public void EditUser(User user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddToWishList(Product product, User user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveFromWishList(Product product, User user)
+        {
+            throw new NotImplementedException();
         }
     }
 }

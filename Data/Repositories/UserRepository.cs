@@ -9,39 +9,38 @@ namespace Data.Repositories
     {
         private readonly IUserContext Context;
 
+        public User GetUserById(int id)
+        {
+            return Context.GetUserById(id);
+        }
+
         public UserRepository(IUserContext context)
         {
             Context = context;
         }
 
-        public User AuthenticateUser(string email, string password)
+        public User Login(string email, string password)
         {
-            return Context.AuthenticatUser(email, password);
+            return Context.Login(email, password);
+        }
+        public void Register(User user)
+        {
+            Context.Register(user);
         }
 
-        public void Delete(int id)
+        public void EditUser(User user)
         {
-            Context.Delete(id);
+            Context.EditUser(user);
         }
 
-        public List<User> GetAll()
+        public void AddToWishList(Product product, User user)
         {
-            return Context.GetAll();
+            Context.AddToWishList(product, user);
         }
 
-        public User GetById(int id)
+        public void RemoveFromWishList(Product product, User user)
         {
-            return Context.GetById(id);
-        }
-
-        public void Insert(User user)
-        {
-            Context.Insert(user);
-        }
-
-        public void Update(User user)
-        {
-            Context.Update(user);
+            Context.RemoveFromWishList(product, user);
         }
     }
 }

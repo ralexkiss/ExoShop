@@ -1,12 +1,12 @@
 ﻿using Models.DataModels;
 using System.Collections.Generic;
 
-namespace Interfaces.Contexts
+namespace Interfaces.Repositories
 {
     /// <summary>
-    /// Defines functionality for a billing context.
+    /// Defines functionality for a product repository.
     /// </summary>
-    public interface IBillingContext
+    public interface IBillingRepository
     {
         Billing GetBillingById(int id);
         void AddBilling(Billing billing);

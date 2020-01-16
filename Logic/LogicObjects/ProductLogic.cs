@@ -17,29 +17,29 @@ namespace Logic.LogicObjects
             productRepository = new ProductRepository(context);
         }
 
-        public void Delete(int id)
-        {
-            productRepository.Delete(id);
-        }
-
         public List<Product> GetAll()
         {
             return productRepository.GetAll();
         }
 
-        public Product GetByid(int id)
+        public Product GetProductById(int id)
         {
-            return productRepository.GetById(id);
+            return productRepository.GetProductById(id);
         }
 
-        public void Insert(Product obj)
+        public void AddProduct(Product product)
         {
-            productRepository.Insert(obj);
+            productRepository.AddProduct(product);
         }
 
-        public void Update(Product obj)
+        public void EditProduct(Product product)
         {
-            productRepository.Update(obj);
+            productRepository.EditProduct(product);
+        }
+
+        public void RemoveProduct(Product product)
+        {
+            productRepository.RemoveProduct(product);
         }
     }
 }

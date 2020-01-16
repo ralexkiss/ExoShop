@@ -5,11 +5,12 @@ namespace Interfaces.Repositories
     /// <summary>
     /// Defines functionality for a user repository.
     /// </summary>
-    public interface IUserRepository : IRepository<User>
+    public interface IUserRepository
     {
-        User GetUserByid(int id);
+        User GetUserById(int id);
         User Login(string email, string password);
         void Register(User user);
+        void EditUser(User user);
         void AddToWishList(Product product, User user);
         void RemoveFromWishList(Product product, User user);
     }

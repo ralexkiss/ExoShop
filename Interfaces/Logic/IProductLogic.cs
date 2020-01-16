@@ -1,14 +1,19 @@
 ﻿
 
 using Models.DataModels;
+using System.Collections.Generic;
 
 namespace Interfaces.Logic
 {
     /// <summary>
-    /// Defines functionality for a user logic class.
+    /// Defines functionality for a product logic class.
     /// </summary>
     public interface IProductLogic
     {
-        Product GetProductByid(int id);
+        List<Product> GetAll();
+        Product GetProductById(int id);
+        void EditProduct(Product product);
+        void AddProduct(Product product);
+        void RemoveProduct(Product product);
     }
 }

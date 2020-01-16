@@ -14,23 +14,24 @@ namespace ExoShop.Controllers
 {
     public class ProductController : Controller
     {
-        List<Product> list = new List<Product>();
+        List<Product> products = new List<Product>();
         private readonly IProductLogic productLogic;
 
         public ProductController(IProductContext context)
         {
             productLogic = new ProductLogic(context);
-            list = productLogic.GetAll();
+            products = productLogic.GetAll();
         }
 
         public IActionResult Index()
         {
-            ViewBag.Products = list;
+            ViewBag.Products = products;
             return View();
         }
 
         public ActionResult EditProduct(int id)
         {
+            ViewBag.Product = products.Find(product => product.ID == id);
             return View();
         }
 
@@ -47,7 +48,11 @@ namespace ExoShop.Controllers
         {
             try
             {
-                productLogic.Delete(id);
+                Product product = new Product
+                {
+                    ID = id
+                };
+                productLogic.RemoveProduct(product);
                 return RedirectToAction("Index", "Product");
             }
             catch (Exception)
@@ -69,7 +74,7 @@ namespace ExoShop.Controllers
             {
                 try
                 {
-                    productLogic.Insert(new Product
+                    productLogic.AddProduct(new Product
                     {
                         Name = model.Name,
                         Description = model.Description,

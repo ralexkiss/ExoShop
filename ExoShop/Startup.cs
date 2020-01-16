@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Data.Contexts;
+﻿using Data.Contexts;
 using Interfaces.Contexts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace GeoChatting
+namespace ExoShop
 {
     public class Startup
     {
@@ -34,6 +29,9 @@ namespace GeoChatting
             });
             services.AddSingleton<IUserContext, UserSqlContext>();
             services.AddSingleton<IProductContext, ProductSqlContext>();
+            services.AddSingleton<IReviewContext, ReviewSqlContext>();
+            services.AddSingleton<IBillingContext, BillingMemoryContext>();
+            services.AddSingleton<ICartContext, CartMemoryContext>();
             services.AddSession();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

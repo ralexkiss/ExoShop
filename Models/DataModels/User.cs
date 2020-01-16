@@ -10,6 +10,7 @@ namespace Models.DataModels
         public string Password { get; set; }
         public bool IsAdmin { get; set; }
         public List<Product> Cart { get; set; }
-        public List<Product> Wishes { get; set; }
+        public List<Product> WishList { get; set; }
+        public Billing billing { get; set; }
     }
 }

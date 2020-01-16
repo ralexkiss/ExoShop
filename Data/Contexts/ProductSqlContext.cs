@@ -1,10 +1,8 @@
-﻿ using Exceptions.User;
-using Interfaces.Contexts;
+﻿using Interfaces.Contexts;
 using Models.DataModels;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
-using System.Data;
 
 namespace Data.Contexts
 {
@@ -12,7 +10,31 @@ namespace Data.Contexts
     {
         private MySqlConnection connection;
 
-        public void Delete(int id)
+        public void AddProduct(Product product)
+        {
+            try
+            {
+                using (connection = DataConnection.getConnection())
+                {
+                    connection.Open();
+                    using (MySqlCommand command = new MySqlCommand("INSERT INTO Products (`Name`, `Description`, `Price`, `ImageUrl`) VALUES (@Name, @Description, @Price, @ImageUrl)", connection))
+                    {
+                        command.Parameters.AddWithValue("@Name", product.Name);
+                        command.Parameters.AddWithValue("@Description", product.Description);
+                        command.Parameters.AddWithValue("@Price", product.Price);
+                        command.Parameters.AddWithValue("@ImageUrl", product.ImageURL);
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+
+        public void RemoveProduct(Product product)
         {
             try
             {
@@ -21,7 +43,31 @@ namespace Data.Contexts
                     connection.Open();
                     using (MySqlCommand command = new MySqlCommand("DELETE FROM Products WHERE ID=@ProductID", connection))
                     {
-                        command.Parameters.AddWithValue("@ProductID", id);
+                        command.Parameters.AddWithValue("@ProductID", product.ID);
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public void EditProduct(Product product)
+        {
+            try
+            {
+                using (connection = DataConnection.getConnection())
+                {
+                    connection.Open();
+                    using (MySqlCommand command = new MySqlCommand("UPDATE Products SET ID=@ProductID,ImageURL=@ImageUrl,Name=@Name,Description=@Description,Price=@Price WHERE ID=@ProductID", connection))
+                    {
+                        command.Parameters.AddWithValue("@ProductID", product.ID);
+                        command.Parameters.AddWithValue("@Name", product.Name);
+                        command.Parameters.AddWithValue("@Description", product.Description);
+                        command.Parameters.AddWithValue("@Price", product.Price);
+                        command.Parameters.AddWithValue("@ImageUrl", product.ImageURL);
                         command.ExecuteNonQuery();
                     }
                 }
@@ -67,37 +113,36 @@ namespace Data.Contexts
             }
         }
 
-        public Product GetById(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Insert(Product product)
+        public Product GetProductById(int id)
         {
             try
             {
+                Product product = new Product();
                 using (connection = DataConnection.getConnection())
                 {
                     connection.Open();
-                    using (MySqlCommand command = new MySqlCommand("INSERT INTO Products (`Name`, `Description`, `Price`, `ImageUrl`) VALUES (@Name, @Description, @Price, @ImageUrl)", connection))
+                    using (MySqlCommand command = new MySqlCommand("SELECT * FROM Products WHERE ID=@ProductID", connection))
                     {
-                        command.Parameters.AddWithValue("@Name", product.Name);
-                        command.Parameters.AddWithValue("@Description", product.Description);
-                        command.Parameters.AddWithValue("@Price", product.Price);
-                        command.Parameters.AddWithValue("@ImageUrl", product.ImageURL);
-                        command.ExecuteNonQuery();
+                        command.Parameters.AddWithValue("@ProductID", id);
+                        using (MySqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                product.ID = (int)reader["ID"];
+                                product.Name = (string)reader["Name"];
+                                product.Description = (string)reader["Description"];
+                                product.Price = (double)reader["Price"];
+                                product.ImageURL = (string)reader["ImageUrl"];       
+                            }
+                            return product;
+                        }
                     }
                 }
             }
-            catch (Exception)
+            catch (MySqlException)
             {
                 throw;
             }
-        }
-
-        public void Update(Product product)
-        {
-            throw new NotImplementedException();
         }
     }
 }

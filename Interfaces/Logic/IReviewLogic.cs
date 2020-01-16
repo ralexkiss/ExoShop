@@ -1,12 +1,14 @@
-﻿using Models.DataModels;
+﻿
+
+using Models.DataModels;
 using System.Collections.Generic;
 
-namespace Interfaces.Contexts
+namespace Interfaces.Logic
 {
     /// <summary>
-    /// Defines functionality for a review context.
+    /// Defines functionality for a review logic class.
     /// </summary>
-    public interface IReviewContext
+    public interface IReviewLogic
     {
         List<Review> GetAllByProduct(Product product);
         Review GetReviewById(int id);

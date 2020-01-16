@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Exceptions.User
+namespace Exceptions.Product
 {
     public class AddingProductFailedException : Exception
     {

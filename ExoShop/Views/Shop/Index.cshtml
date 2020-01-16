@@ -10,7 +10,23 @@
             <h1>@product.Name</h1>
             <p class="price">€@product.Price</p>
             <p>@product.Description</p>
-            <p><button onclick="location.href='@Url.Action("AddToCart", "Product")'">Add to cart<i class="fas fa-cart-plus"></i></button></p>
+            @for (int i = 0; i < 5; i++)
+            {
+                if (i < product.reviews.Average(review => review.Stars))
+                {
+                    <span class="fa fa-star checked"></span>
+                }
+                else
+                {
+                    <span class="fa fa-star"></span>
+                }
+            }
+            <form asp-action="AddToCart">
+                <button type="submit" method="post" class="btn btn-danger" asp-controller="Cart"
+                        asp-action="AddToCart" asp-route-id="@product.ID">
+                    Add to Cart <i class="fa fa-cart-plus"></i>
+                </button>
+            </form>
         </div>
     </div>
 }

@@ -1,4 +1,5 @@
 ﻿using Exceptions.User;
+using ExoShop;
 using GeoChatting.Models;
 using Interfaces.Contexts;
 using Interfaces.Logic;
@@ -21,7 +22,8 @@ namespace GeoChatting.Controllers
 
         public IActionResult Index()
         {
-            return HttpContext.Session.GetString("name") != null ? View() : (IActionResult)RedirectToAction("SignIn", "User");
+            User loggedInUser = HttpContext.Session.GetObject<User>("loggedInUser");
+            return String.IsNullOrEmpty(loggedInUser.Name) ? (IActionResult)RedirectToAction("SignIn", "User") : View();
         }
 
         public ActionResult SignIn()
@@ -42,13 +44,14 @@ namespace GeoChatting.Controllers
             {
                 try
                 {
-                    User local = UserLogic.AuthenticateUser(user.Email, user.Password);
+                    User local = UserLogic.Login(user.Email, user.Password);
                     HttpContext.Session.SetInt32("id", local.ID);
                     HttpContext.Session.SetString("name", local.Name);
                     HttpContext.Session.SetString("admin", local.IsAdmin.ToString().ToLower());
+                    HttpContext.Session.SetObject("loggedInUser", local);
                     return RedirectToAction("Index", "Home");
                 }
-                catch (AuthenticationFailedException)
+                catch (AddingProductFailedException)
                 {
                     ModelState.AddModelError("", "The email or password provided is incorrect.");
                     return View();
@@ -65,13 +68,12 @@ namespace GeoChatting.Controllers
             {
                 try
                 {
-                    UserLogic.Insert(new User
+                    UserLogic.Register(new User
                     {
                         Email = user.Email,
                         Name = user.Name,
                         Password = user.Password
                     });
-                    HttpContext.Session.SetString("Email", user.Email);
                     return RedirectToAction("SignIn", "User");
                 }
                 catch (Exception)
@@ -88,6 +90,7 @@ namespace GeoChatting.Controllers
             HttpContext.Session.SetInt32("id", 0);
             HttpContext.Session.SetString("name", string.Empty);
             HttpContext.Session.SetString("admin", "false");
+            HttpContext.Session.SetObject("loggedInUser", null);
             return RedirectToAction("Index", "Home");
         }
     }

@@ -1,12 +1,12 @@
 ﻿using Models.DataModels;
 using System.Collections.Generic;
 
-namespace Interfaces.Contexts
+namespace Interfaces.Repositories
 {
     /// <summary>
-    /// Defines functionality for a review context.
+    /// Defines functionality for a review repository.
     /// </summary>
-    public interface IReviewContext
+    public interface IReviewRepository
     {
         List<Review> GetAllByProduct(Product product);
         Review GetReviewById(int id);
