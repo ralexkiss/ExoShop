@@ -1,6 +1,7 @@
 ﻿using Data;
 using Data.Contexts;
 using Data.Repositories;
+using Exceptions.Review;
 using Interfaces.Contexts;
 using Interfaces.Logic;
 using Interfaces.Repositories;
@@ -38,6 +39,10 @@ namespace Logic.LogicObjects
 
         public void AddReview(Review review)
         {
+            if (review.Message.Length > 50 || review.Stars > 5)
+            {
+                throw new AddingReviewFailedException();
+            }
             reviewRepository.AddReview(review);
         }
         public void RemoveReview(Review review)

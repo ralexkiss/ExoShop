@@ -4,7 +4,9 @@ using Interfaces.Contexts;
 using Interfaces.Logic;
 using Interfaces.Repositories;
 using Models.DataModels;
+using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
+using Exceptions.User;
 
 namespace Logic.LogicObjects
 {
@@ -24,11 +26,19 @@ namespace Logic.LogicObjects
 
         public User Login(string email, string password)
         {
+            if (!new EmailAddressAttribute().IsValid(email))
+            {
+                throw new AuthenticationFailedException();
+            }
             return UserRepository.Login(email, new Hasher().GetSha256FromString(password));
         }
 
         public void Register(User user)
         {
+            if (!new EmailAddressAttribute().IsValid(user.Email))
+            {
+                throw new RegistrationFailedException();
+            }
             user.Password = new Hasher().GetSha256FromString(user.Password);
             UserRepository.Register(user);
         }
