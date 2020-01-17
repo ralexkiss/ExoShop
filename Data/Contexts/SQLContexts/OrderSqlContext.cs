@@ -1,4 +1,5 @@
-﻿using Interfaces.Contexts;
+﻿using Exceptions.Order;
+using Interfaces.Contexts;
 using Models.DataModels;
 using MySql.Data.MySqlClient;
 using System;
@@ -87,7 +88,7 @@ namespace Data.Contexts
             }
             catch (MySqlException)
             {
-                throw;
+                throw new GetAllOrdersByUserFailedException();
             }
         }
 
@@ -117,9 +118,9 @@ namespace Data.Contexts
                     }
                 }
             }
-            catch (Exception)
+            catch (MySqlException)
             {
-                throw;
+                throw new AddingOrderFailedException();
             }
         }
 
@@ -138,9 +139,9 @@ namespace Data.Contexts
                     }
                 }
             }
-            catch (Exception)
+            catch (MySqlException)
             {
-                throw;
+                throw new RemovingOrderFailedException();
             }
         }
     }

@@ -1,9 +1,18 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-<header class="bg-gradient" id="home">
-    <div class="container mt-5">
-        <h1>ExoShop</h1>
-        <p class="tagline">De winkel van ons allemaal</p>
+<header class="masthead">
+  <div class="container h-100">
+    <div class="row h-100 align-items-center">
+        <div class="col-12 text-center">
+            <h1>Start shopping now!</h1>
+            <form asp-action="Index">
+                <button type="submit" method="post" class="mainBtn" asp-controller="Shop"
+                        asp-action="Index">
+                    ExoShop
+                </button>
+            </form>
+        </div>
     </div>
+  </div>
 </header>

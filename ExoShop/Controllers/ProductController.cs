@@ -9,6 +9,7 @@ using Interfaces.Logic;
 using Logic.LogicObjects;
 using ExoShop.Models;
 using Models.DataModels;
+using Exceptions.Product;
 
 namespace ExoShop.Controllers
 {
@@ -16,22 +17,31 @@ namespace ExoShop.Controllers
     {
         List<Product> products = new List<Product>();
         private readonly IProductLogic productLogic;
+        private readonly IReviewLogic reviewLogic;
 
-        public ProductController(IProductContext context)
+        public ProductController(IProductContext productContext, IReviewContext reviewContext)
         {
-            productLogic = new ProductLogic(context);
+            productLogic = new ProductLogic(productContext);
+            reviewLogic = new ReviewLogic(reviewContext);
+
             products = productLogic.GetAll();
         }
 
-        public IActionResult Index(int id)
+        public IActionResult Info(int id)
         {
-            ViewBag.Products = products;
+            Product product = products.Find(foundProduct => foundProduct.ID == id);
+            if (product == null)
+            {
+                return RedirectToAction("Index", "Shop");
+            }
+            ViewBag.Reviews = reviewLogic.GetAllByProduct(product);
+            ViewBag.Product = product;
             return View();
         }
 
         public IActionResult ProductPanel()
         {
-            User loggedInUser = HttpContext.Session.GetObject<User>("loggedInUser");
+            User loggedInUser = HttpContext.Session.GetUser();
             if (loggedInUser.IsAdmin)
             {
                 ViewBag.Products = products;
@@ -44,7 +54,7 @@ namespace ExoShop.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult EditProduct(int id, ProductViewModel model)
         {
-            User loggedInUser = HttpContext.Session.GetObject<User>("loggedInUser");
+            User loggedInUser = HttpContext.Session.GetUser();
             if (loggedInUser.IsAdmin)
             {
                 if (ModelState.IsValid)
@@ -62,9 +72,9 @@ namespace ExoShop.Controllers
                         });
                         return RedirectToAction("ProductPanel", "Product");
                     }
-                    catch (Exception)
+                    catch (UpdatingProductFailedException)
                     {
-                        return RedirectToAction("ProductPanel", "Product");
+                        throw new UpdatingProductFailedException();
                     }
                 }
             }
@@ -75,7 +85,7 @@ namespace ExoShop.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteProduct(int id)
         {
-            User loggedInUser = HttpContext.Session.GetObject<User>("loggedInUser");
+            User loggedInUser = HttpContext.Session.GetUser();
             if (loggedInUser.IsAdmin)
             {
                 try
@@ -87,9 +97,9 @@ namespace ExoShop.Controllers
                     productLogic.RemoveProduct(product);
                     return RedirectToAction("ProductPanel", "Product");
                 }
-                catch (Exception)
+                catch (RemovingProductFailedException)
                 {
-                    return RedirectToAction("ProductPanel", "Product");
+                    throw new RemovingProductFailedException();
                 }
             }
             return RedirectToAction("ProductPanel", "Product");
@@ -97,7 +107,7 @@ namespace ExoShop.Controllers
 
         public ActionResult AddProduct()
         {
-            User loggedInUser = HttpContext.Session.GetObject<User>("loggedInUser");
+            User loggedInUser = HttpContext.Session.GetUser();
             if (loggedInUser.IsAdmin)
             {
                 return View();
@@ -109,7 +119,7 @@ namespace ExoShop.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult AddProduct(ProductViewModel model)
         {
-            User loggedInUser = HttpContext.Session.GetObject<User>("loggedInUser");
+            User loggedInUser = HttpContext.Session.GetUser();
             if (loggedInUser.IsAdmin)
             {
                 if (ModelState.IsValid)
@@ -124,11 +134,11 @@ namespace ExoShop.Controllers
                             Price = model.Price,
 
                         });
-                        return RedirectToAction("Index", "Product");
+                        return RedirectToAction("ProductPanel", "Product");
                     }
-                    catch (Exception)
+                    catch (AddingProductFailedException)
                     {
-                        return View();
+                        throw new AddingProductFailedException();
                     }
                 }
             }

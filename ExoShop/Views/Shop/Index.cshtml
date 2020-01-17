@@ -6,7 +6,9 @@
 {
     <div class="container">
         <div class="product-card">
-            <img src="@product.ImageURL" class="product-image" alt="@product.Name">
+            <a asp-controller="Product" asp-action="Info" asp-route-id="@product.ID" method="post">
+                <img src="@product.ImageURL" class="product-image" alt="@product.Name">
+            </a>
             <h2>@product.Name</h2>
             @for (int i = 0; i < 5; i++)
             {

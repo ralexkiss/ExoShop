@@ -1,4 +1,5 @@
-﻿using Interfaces.Contexts;
+﻿using Exceptions.Wishes;
+using Interfaces.Contexts;
 using Models.DataModels;
 using MySql.Data.MySqlClient;
 using System;
@@ -25,9 +26,9 @@ namespace Data.Contexts
                     }
                 }
             }
-            catch (Exception)
+            catch (MySqlException)
             {
-                throw;
+                throw new AddingWishFailedException();
             }
         }
 
@@ -47,9 +48,9 @@ namespace Data.Contexts
                     }
                 }
             }
-            catch (Exception)
+            catch (MySqlException)
             {
-                throw;
+                throw new RemovingWishesFailedException();
             }
         }
 
@@ -85,7 +86,7 @@ namespace Data.Contexts
             }
             catch (MySqlException)
             {
-                throw;
+                throw new GetAllWishesFailedException();
             }
         }
     }

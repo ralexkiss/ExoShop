@@ -17,6 +17,7 @@ namespace ExoShop.Models
         public string Description { get; set; }
         [Required]
         [DataType(DataType.Currency)]
+        [Range(0.0, 10000000000)]
         public double Price { get; set; }
         [Required]
         [DataType(DataType.ImageUrl)]

@@ -1,45 +1,33 @@
-using NUnit.Framework;
+using Data.Contexts;
+using Interfaces.Logic;
+using Logic.LogicObjects;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Diagnostics;
 
 namespace UnitTest
 {
-    public class Tests
+    [TestClass]
+    public class UnitTests
     {
+        private readonly IUserLogic userLogic = new UserLogic(new UserSqlContext());
+
         Stopwatch stopWatch = new Stopwatch();
 
-        [SetUp]
+        [ClassInitialize]
         public void InitializeTests()
         {
             stopWatch.Start();
-
         }
 
-        [Test]
-        public void RegisterUser()
-        {
-            Assert.IsTrue(true);
-        }
+        #region Positive Unit & Integration Tests
+        #endregion
 
-        [Test]
-        public void AuthorizeUser()
-        {
-            Assert.IsTrue(true);
-        }
 
-        [Test]
-        public void AddToCart()
-        {
-            Assert.IsTrue(true);
-        }
+        #region Negative Unit & Integration Tests
+        #endregion
 
-        [Test]
-        public void FillCheckout()
-        {
-            Assert.IsTrue(true);
-        }
-
-        [Test]
+        [ClassCleanup]
         public void Finish()
         {
             stopWatch.Stop();

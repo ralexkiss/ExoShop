@@ -1,4 +1,5 @@
 ﻿using Data;
+using Data.Contexts;
 using Data.Repositories;
 using Interfaces.Contexts;
 using Interfaces.Logic;
@@ -11,6 +12,8 @@ namespace Logic.LogicObjects
     public class ReviewLogic : IReviewLogic
     {
         private readonly IReviewRepository reviewRepository;
+        private readonly IUserLogic userLogic = new UserLogic(new UserSqlContext());
+        private readonly IProductLogic productLogic = new ProductLogic(new ProductSqlContext());
 
         public ReviewLogic(IReviewContext context)
         {
@@ -19,7 +22,13 @@ namespace Logic.LogicObjects
 
         public List<Review>GetAllByProduct(Product product)
         {
-            return reviewRepository.GetAllByProduct(product);
+            List<Review> reviews = reviewRepository.GetAllByProduct(product);
+            foreach (Review review in reviews)
+            {
+                review.User = userLogic.GetUserById(review.User.ID);
+                review.Product = productLogic.GetProductById(review.Product.ID);
+            }
+            return reviews;
         }
 
         public Review GetReviewById(int id)

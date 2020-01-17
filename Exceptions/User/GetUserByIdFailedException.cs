@@ -2,7 +2,7 @@
 
 namespace Exceptions.User
 {
-    public class AuthenticationFailedException : Exception
+    public class GetUserByIdFailedException : Exception
     {
 
     }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Exceptions.Wishes;
 using Interfaces.Contexts;
 using Interfaces.Logic;
 using Logic.LogicObjects;
@@ -25,10 +26,17 @@ namespace ExoShop.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult AddToWishes(int id)
         {
-            User loggedInUser = HttpContext.Session.GetObject<User>("loggedInUser");
-            wishLogic.AddToWishList(productLogic.GetProductById(id),loggedInUser);
-            HttpContext.Session.SetObject("loggedInUser", loggedInUser);
-            return RedirectToAction("Index", "Shop");
+            try
+            {
+                User loggedInUser = HttpContext.Session.GetUser();
+                wishLogic.AddToWishList(productLogic.GetProductById(id), loggedInUser);
+                HttpContext.Session.UpdateUser(loggedInUser);
+                return RedirectToAction("Index", "Shop");
+            }
+            catch (AddingWishFailedException)
+            {
+                throw new AddingWishFailedException();
+            }
         }
 
 
@@ -36,10 +44,17 @@ namespace ExoShop.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult RemoveFromWishes(int id)
         {
-            User loggedInUser = HttpContext.Session.GetObject<User>("loggedInUser");
-            wishLogic.RemoveFromWishList(productLogic.GetProductById(id), loggedInUser);    
-            HttpContext.Session.SetObject("loggedInUser", loggedInUser);
-            return RedirectToAction("Index", "User");
+            try
+            {
+                User loggedInUser = HttpContext.Session.GetUser();
+                wishLogic.RemoveFromWishList(productLogic.GetProductById(id), loggedInUser);
+                HttpContext.Session.UpdateUser(loggedInUser);
+                return RedirectToAction("Index", "User");
+            }
+            catch (RemovingWishesFailedException)
+            {
+                throw new RemovingWishesFailedException();
+            }
         }
     }
 }

@@ -11,11 +11,14 @@ namespace ExoShop.Models
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
+        [StringLength(50)]
+
         public string Email { get; set; }
 
         [Required]
         [Display(Name = "Full Name")]
         [DataType(DataType.Text)]
+        [StringLength(30)]
         public string Name { get; set; }
 
         [Required]

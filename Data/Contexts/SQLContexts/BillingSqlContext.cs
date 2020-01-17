@@ -1,4 +1,5 @@
-﻿ using Exceptions.User;
+﻿using Exceptions.Billing;
+using Exceptions.User;
 using Interfaces.Contexts;
 using Models.DataModels;
 using MySql.Data.MySqlClient;
@@ -41,7 +42,7 @@ namespace Data.Contexts
             }
             catch (MySqlException)
             {
-                throw;
+                throw new GetBillingByIdFailedException();
             }
         }
 
@@ -63,9 +64,9 @@ namespace Data.Contexts
                     }
                 }
             }
-            catch (Exception)
+            catch (MySqlException)
             {
-                throw;
+                throw new AddingBillingFailedException();
             }
         }
 
@@ -83,9 +84,9 @@ namespace Data.Contexts
                     }
                 }
             }
-            catch (Exception)
+            catch (MySqlException)
             {
-                throw;
+                throw new RemovingBillingFailedException();
             }
         }
     }

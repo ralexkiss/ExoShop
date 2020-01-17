@@ -14,7 +14,33 @@ namespace Data.Contexts
 
         public User GetUserById(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                User user = new User();
+                using (connection = DataConnection.getConnection())
+                {
+                    connection.Open();
+                    using (MySqlCommand command = new MySqlCommand("SELECT * FROM User WHERE ID=@ID", connection))
+                    {
+                        command.Parameters.AddWithValue("@ID", id);
+                        using (MySqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                user.ID = (int)reader["ID"];
+                                user.Email = (string)reader["Email"];
+                                user.Name = (string)reader["Name"];
+                                user.IsAdmin = (bool)reader["IsAdmin"];
+                            }
+                            return user;
+                        }
+                    }
+                }
+            }
+            catch (MySqlException)
+            {
+                throw new GetUserByIdFailedException();
+            }
         }
 
         public User Login(string email, string password)
@@ -43,13 +69,13 @@ namespace Data.Contexts
                                 return user;
                             }
                         }
-                        throw new AddingProductFailedException();
+                        throw new AuthenticationFailedException();
                     }
                 }
             }
             catch (MySqlException)
             {
-                throw new AddingProductFailedException();
+                throw new AuthenticationFailedException();
             }
         }
 
@@ -93,9 +119,9 @@ namespace Data.Contexts
                     }
                 }
             }
-            catch (Exception)
+            catch (MySqlException)
             {
-                throw;
+                throw new UpdatingUserFailedException();
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using Interfaces.Contexts;
+﻿using Exceptions.Product;
+using Interfaces.Contexts;
 using Models.DataModels;
 using MySql.Data.MySqlClient;
 using System;
@@ -27,9 +28,9 @@ namespace Data.Contexts
                     }
                 }
             }
-            catch (Exception)
+            catch (MySqlException)
             {
-                throw;
+                throw new AddingProductFailedException();
             }
         }
 
@@ -48,9 +49,9 @@ namespace Data.Contexts
                     }
                 }
             }
-            catch (Exception)
+            catch (MySqlException)
             {
-                throw;
+                throw new RemovingProductFailedException();
             }
         }
 
@@ -72,9 +73,9 @@ namespace Data.Contexts
                     }
                 }
             }
-            catch (Exception)
+            catch (MySqlException)
             {
-                throw;
+                throw new UpdatingProductFailedException();
             }
         }
 
@@ -109,7 +110,7 @@ namespace Data.Contexts
             }
             catch (MySqlException)
             {
-                throw;
+                throw new GetAllProductsFailedException();
             }
         }
 
@@ -141,7 +142,7 @@ namespace Data.Contexts
             }
             catch (MySqlException)
             {
-                throw;
+                throw new GetProductByIdFailedException();
             }
         }
     }

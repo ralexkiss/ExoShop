@@ -1,17 +1,16 @@
-﻿ using Exceptions.User;
+﻿using Exceptions.Review;
 using Interfaces.Contexts;
+using Interfaces.Logic;
 using Models.DataModels;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
-using System.Data;
 
 namespace Data.Contexts
 {
     public class ReviewSqlContext : IReviewContext
     {
         private MySqlConnection connection;
-
 
         public List<Review> GetAllByProduct(Product product)
         {
@@ -28,11 +27,15 @@ namespace Data.Contexts
                         {
                             while (reader.Read())
                             {
+                                User user = new User
+                                {
+                                    ID = (int)reader["UserID"]
+                                };
                                 Review review = new Review
                                 {
                                     ID = (int)reader["ID"],
-                                    UserID = (int)reader["UserID"],
-                                    ProductID = (int)reader["ProductID"],
+                                    User = user,
+                                    Product = product,
                                     Stars = (int)reader["Stars"],
                                     Message = (string)reader["Review"]
                                 };
@@ -45,7 +48,7 @@ namespace Data.Contexts
             }
             catch (MySqlException)
             {
-                throw;
+                throw new GetAllReviewsFailedException();
             }
         }
 
@@ -64,9 +67,17 @@ namespace Data.Contexts
                         {
                             while (reader.Read())
                             {
+                                User user = new User
+                                {
+                                    ID = (int)reader["UserID"]
+                                };
+                                Product product = new Product
+                                {
+                                    ID = (int)reader["ProductID"]
+                                };
                                 review.ID = (int)reader["ID"];
-                                review.UserID = (int)reader["UserID"];
-                                review.ProductID = (int)reader["ProductID"];
+                                review.User = user;
+                                review.Product = product;
                                 review.Stars = (int)reader["Stars"];
                                 review.Message = (string)reader["Review"];
                             }
@@ -77,7 +88,7 @@ namespace Data.Contexts
             }
             catch (MySqlException)
             {
-                throw;
+                throw new GetReviewByIDFailedException();
             }
         }
         public void AddReview(Review review)
@@ -89,17 +100,17 @@ namespace Data.Contexts
                     connection.Open();
                     using (MySqlCommand command = new MySqlCommand("INSERT INTO Reviews(UserID, ProductID, Stars, Review) VALUES (@UserID,@ProductID,@Stars,@Message)", connection))
                     {
-                        command.Parameters.AddWithValue("@UserID", review.UserID);
-                        command.Parameters.AddWithValue("@ProductID", review.ProductID);
+                        command.Parameters.AddWithValue("@UserID", review.User.ID);
+                        command.Parameters.AddWithValue("@ProductID", review.Product.ID);
                         command.Parameters.AddWithValue("@Stars", review.Stars);
                         command.Parameters.AddWithValue("@Message", review.Message);
                         command.ExecuteNonQuery();
                     }
                 }
             }
-            catch (Exception)
+            catch (MySqlException)
             {
-                throw;
+                throw new AddingReviewFailedException();
             }
         }
 
@@ -117,9 +128,9 @@ namespace Data.Contexts
                     }
                 }
             }
-            catch (Exception)
+            catch (MySqlException)
             {
-                throw;
+                throw new RemovingReviewFailedException();
             }
         }
     }

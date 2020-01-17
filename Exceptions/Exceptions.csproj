@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Wishes\" />
     <Folder Include="Shop\" />
   </ItemGroup>
 

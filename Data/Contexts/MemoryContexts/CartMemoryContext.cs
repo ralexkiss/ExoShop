@@ -1,4 +1,5 @@
-﻿ using Exceptions.User;
+﻿using Exceptions.Cart;
+using Exceptions.User;
 using Interfaces.Contexts;
 using Models.DataModels;
 using MySql.Data.MySqlClient;
@@ -18,12 +19,27 @@ namespace Data.Contexts
 
         public void AddToCart(Product product, User user)
         {
-            user.Cart.Add(product);
+            try
+            {
+
+                user.Cart.Add(product);
+            }
+            catch (Exception)
+            {
+                throw new AddingToCartFailedException();
+            }
         }
 
         public void RemoveFromCart(Product product, User user)
         {
-            user.Cart.RemoveAll(foundProduct => foundProduct.ID == product.ID);
+            try
+            {
+                user.Cart.RemoveAll(foundProduct => foundProduct.ID == product.ID);
+            }
+            catch (Exception)
+            {
+                throw new RemovingFromCartFailedException();
+            }
         }
     }
 }

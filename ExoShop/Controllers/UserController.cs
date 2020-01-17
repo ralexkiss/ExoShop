@@ -26,7 +26,7 @@ namespace ExoShop.Controllers
 
         public IActionResult Index()
         {
-            User loggedInUser = HttpContext.Session.GetObject<User>("loggedInUser");
+            User loggedInUser = HttpContext.Session.GetUser();
             ViewBag.User = loggedInUser;
             ViewBag.Orders = orderLogic.GetAllOrdersByUser(loggedInUser);
             ViewBag.Wishes = wishLogic.GetWishesByUser(loggedInUser);
@@ -53,14 +53,10 @@ namespace ExoShop.Controllers
                 {
                     User loggedInUser = userLogic.Login(user.Email, user.Password);
                     loggedInUser.WishList = wishLogic.GetWishesByUser(loggedInUser);
-                    HttpContext.Session.DeleteObject("loggedInUser");
-                    HttpContext.Session.SetInt32("id", loggedInUser.ID);
-                    HttpContext.Session.SetString("name", loggedInUser.Name);
-                    HttpContext.Session.SetString("admin", loggedInUser.IsAdmin.ToString().ToLower());
-                    HttpContext.Session.SetObject("loggedInUser", loggedInUser);
+                    SignInUser(loggedInUser);
                     return RedirectToAction("Index", "User");
                 }
-                catch (Exception)
+                catch (AuthenticationFailedException)
                 {
                     ModelState.AddModelError("", "The email or password provided is incorrect.");
                     return View();
@@ -77,19 +73,14 @@ namespace ExoShop.Controllers
             {
                 try
                 {
-                    User loggedInUser = HttpContext.Session.GetObject<User>("loggedInUser");
-                    loggedInUser.Email = user.Email;
-                    loggedInUser.Name = user.Name;
-                    loggedInUser.Password = user.Password;
+                    User loggedInUser = UpdateUserInfo(user);
                     userLogic.EditUser(loggedInUser);
-                    HttpContext.Session.SetInt32("id", 0);
-                    HttpContext.Session.SetString("name", string.Empty);
-                    HttpContext.Session.SetString("admin", "false");
-                    HttpContext.Session.DeleteObject("loggedInUser");
+                    HttpContext.Session.ResetUser();
                     return RedirectToAction("Index", "Home");
                 }
-                catch (Exception)
+                catch (UpdatingUserFailedException)
                 {
+                    ModelState.AddModelError("", "Updating user information failed");
                     return RedirectToAction("Index", "User");
                 }
             }
@@ -112,8 +103,9 @@ namespace ExoShop.Controllers
                     });
                     return RedirectToAction("SignIn", "User");
                 }
-                catch (Exception)
+                catch (RegistrationFailedException)
                 {
+                    ModelState.AddModelError("", "Registration failed, Try again");
                     return View();
                 }
             }
@@ -123,11 +115,24 @@ namespace ExoShop.Controllers
         [HttpGet]
         public IActionResult SignOut()
         {
-            HttpContext.Session.SetInt32("id", 0);
-            HttpContext.Session.SetString("name", string.Empty);
-            HttpContext.Session.SetString("admin", "false");
-            HttpContext.Session.DeleteObject("loggedInUser");
+            HttpContext.Session.ResetUser();
             return RedirectToAction("Index", "Home");
         }
+
+        #region Methods
+        private void SignInUser(User loggedInUser)
+        {
+            HttpContext.Session.UpdateUser(loggedInUser);
+        }
+
+        private User UpdateUserInfo(RegisterViewModel user)
+        {
+            User loggedInUser = HttpContext.Session.GetUser();
+            loggedInUser.Email = user.Email;
+            loggedInUser.Name = user.Name;
+            loggedInUser.Password = user.Password;
+            return loggedInUser;
+        }
+        #endregion
     }
 }
