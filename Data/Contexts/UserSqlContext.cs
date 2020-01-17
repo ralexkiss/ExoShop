@@ -77,7 +77,26 @@ namespace Data.Contexts
 
         public void EditUser(User user)
         {
-            throw new NotImplementedException();
+            try
+            {
+                using (connection = DataConnection.getConnection())
+                {
+                    connection.Open();
+                    using (MySqlCommand command = new MySqlCommand("UPDATE User SET Email=@Email, Name=@Name, Password=@Password, IsAdmin=@IsAdmin WHERE ID=@UserID", connection))
+                    {
+                        command.Parameters.AddWithValue("@UserID", user.ID);
+                        command.Parameters.AddWithValue("@Email", user.Email);
+                        command.Parameters.AddWithValue("@Name", user.Name);
+                        command.Parameters.AddWithValue("@Password", user.Password);
+                        command.Parameters.AddWithValue("@IsAdmin", user.IsAdmin);
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

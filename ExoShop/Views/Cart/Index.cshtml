@@ -23,17 +23,25 @@
     <tbody>
         @foreach (Product product in ViewBag.Cart)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => product.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => product.Description)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => product.Price)
-                </td>
-            </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => product.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => product.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => product.Price)
+            </td>
+            <td>
+                <form asp-action="RemoveFromCart">
+                    <button type="submit" method="post" class="mainBtn" asp-controller="Cart"
+                            asp-action="RemoveFromCart" asp-route-id="@product.ID">
+                        Remove
+                    </button>
+                </form>
+            </td>
+        </tr>
         }
     </tbody>
 </table>

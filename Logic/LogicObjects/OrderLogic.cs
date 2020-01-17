@@ -20,12 +20,6 @@ namespace Logic.LogicObjects
         {
             return OrderRepository.GetAllOrdersByUser(user);
         }
-
-        public Order GetOrderById(int id)
-        {
-            return OrderRepository.GetOrderById(id);
-        }
-
         public void AddOrder(Order Order)
         {
             OrderRepository.AddOrder(Order);

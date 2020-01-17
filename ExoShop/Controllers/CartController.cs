@@ -45,7 +45,7 @@ namespace ExoShop.Controllers
         public IActionResult RemoveFromCart(int id)
         {
             User loggedInUser = HttpContext.Session.GetObject<User>("loggedInUser");
-            cartLogic.RemoveFromCart(productLogic.GetProductById(id), loggedInUser);    
+            cartLogic.RemoveFromCart(productLogic.GetProductById(id), loggedInUser);
             HttpContext.Session.SetObject("loggedInUser", loggedInUser);
             return RedirectToAction("Index", "Cart");
         }

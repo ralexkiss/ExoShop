@@ -35,6 +35,7 @@ namespace Logic.LogicObjects
 
         public void EditUser(User user)
         {
+            user.Password = new Hasher().GetSha256FromString(user.Password);
             UserRepository.EditUser(user);
         }
     }

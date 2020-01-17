@@ -71,6 +71,33 @@ namespace ExoShop.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        public IActionResult UpdateUser(RegisterViewModel user)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    User loggedInUser = HttpContext.Session.GetObject<User>("loggedInUser");
+                    loggedInUser.Email = user.Email;
+                    loggedInUser.Name = user.Name;
+                    loggedInUser.Password = user.Password;
+                    userLogic.EditUser(loggedInUser);
+                    HttpContext.Session.SetInt32("id", 0);
+                    HttpContext.Session.SetString("name", string.Empty);
+                    HttpContext.Session.SetString("admin", "false");
+                    HttpContext.Session.DeleteObject("loggedInUser");
+                    return RedirectToAction("Index", "Home");
+                }
+                catch (Exception)
+                {
+                    return RedirectToAction("Index", "User");
+                }
+            }
+            return RedirectToAction("Index", "User");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult SignUp(RegisterViewModel user)
         {
             if (ModelState.IsValid)

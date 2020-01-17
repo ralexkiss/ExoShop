@@ -1,11 +1,8 @@
-﻿using Exceptions.User;
-using Interfaces.Contexts;
+﻿using Interfaces.Contexts;
 using Models.DataModels;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 
 namespace Data.Contexts
 {
@@ -15,7 +12,6 @@ namespace Data.Contexts
         public List<Order> GetAllOrdersByUser(User user)
         {
             List<Order> orders = new List<Order>();
-            List<Product> products = new List<Product>();
             try
             {
                 using (connection = DataConnection.getConnection())
@@ -28,57 +24,67 @@ namespace Data.Contexts
                         {
                             while (reader.Read())
                             {
+                                List<Product> products = new List<Product>();
                                 Order order = new Order();
                                 order.ID = (int)reader["ID"];
-                                order.user = user;
+                                order.User = user;
                                 order.Status = (string)reader["Status"];
-                                order.date = reader["Date"] == DBNull.Value ? DateTime.Now : (DateTime)reader["Date"];
+                                order.Date = reader["Date"] == DBNull.Value ? DateTime.Now : (DateTime)reader["Date"];
 
-                                using (MySqlCommand getProducts = new MySqlCommand("SELECT * FROM Products INNER JOIN OrderProducts ON OrderProducts.ProductID = Products.ID WHERE OrderProducts.OrderID=@OrderID ORDER BY Price DESC", connection))
+                                using (MySqlConnection getProductsConnection = DataConnection.getConnection())
                                 {
-                                    getProducts.Parameters.AddWithValue("@OrderID", order.ID);
-                                    using (MySqlDataReader getProductsReader = getProducts.ExecuteReader())
+                                    getProductsConnection.Open();
+                                    using (MySqlCommand getProducts = new MySqlCommand("SELECT * FROM Products INNER JOIN OrderProducts ON OrderProducts.ProductID = Products.ID WHERE OrderProducts.OrderID=@OrderID", getProductsConnection))
                                     {
-                                        while (getProductsReader.Read())
+                                        getProducts.Parameters.AddWithValue("@OrderID", order.ID);
+                                        using (MySqlDataReader getProductsReader = getProducts.ExecuteReader())
                                         {
-                                            Product product = new Product
+                                            while (getProductsReader.Read())
                                             {
-                                                ID = (int)getProductsReader["ID"],
-                                                Name = (string)getProductsReader["Name"],
-                                                Description = (string)getProductsReader["Description"],
-                                                Price = (double)getProductsReader["Price"],
-                                                ImageURL = (string)getProductsReader["ImageUrl"]
-                                            };
-                                            products.Add(product);
+                                                Product product = new Product
+                                                {
+                                                    ID = (int)getProductsReader["ID"],
+                                                    Name = (string)getProductsReader["Name"],
+                                                    Description = (string)getProductsReader["Description"],
+                                                    Price = (double)getProductsReader["Price"],
+                                                    ImageURL = (string)getProductsReader["ImageUrl"]
+                                                };
+                                                products.Add(product);
+                                            }
                                         }
                                     }
                                 }
-                                Billing billing = new Billing();
-                                using (MySqlCommand getBilling = new MySqlCommand("SELECT * FROM Billing WHERE ID=@BillingID", connection))
+                                using (MySqlConnection getBillingConnection = DataConnection.getConnection())
                                 {
-                                    getBilling.Parameters.AddWithValue("@BillingID", reader["BillingID"]);
-                                    using (MySqlDataReader getBillingReader = getBilling.ExecuteReader())
+                                    getBillingConnection.Open();
+                                    Billing billing = new Billing();
+                                    using (MySqlCommand getBilling = new MySqlCommand("SELECT * FROM Billing WHERE ID=@BillingID", getBillingConnection))
                                     {
-                                        while (getBillingReader.Read())
+                                        getBilling.Parameters.AddWithValue("@BillingID", reader["BillingID"]);
+                                        using (MySqlDataReader getBillingReader = getBilling.ExecuteReader())
                                         {
-                                            billing.ID = (int)getBillingReader["ID"];
-                                            billing.FirstName = (string)getBillingReader["FirstName"];
-                                            billing.LastName = (string)getBillingReader["LastName"];
-                                            billing.PhoneNumber = (string)getBillingReader["Phone"];
-                                            billing.Address = (string)getBillingReader["Address"];
-                                            billing.City = (string)getBillingReader["City"];
+                                            while (getBillingReader.Read())
+                                            {
+                                                billing.ID = (int)getBillingReader["ID"];
+                                                billing.FirstName = (string)getBillingReader["FirstName"];
+                                                billing.LastName = (string)getBillingReader["LastName"];
+                                                billing.PhoneNumber = (string)getBillingReader["Phone"];
+                                                billing.Address = (string)getBillingReader["Address"];
+                                                billing.City = (string)getBillingReader["City"];
+                                            }
                                         }
                                     }
+
+                                    order.Billing = billing;
                                 }
-                                order.billing = billing;
-                                order.products = products;
+                                order.Products = products;
                                 orders.Add(order);
-                                }
-                                return orders;
                             }
+                            return orders;
                         }
                     }
                 }
+            }
             catch (MySqlException)
             {
                 throw;
@@ -92,21 +98,20 @@ namespace Data.Contexts
                 using (connection = DataConnection.getConnection())
                 {
                     connection.Open();
-                    using (MySqlCommand command = new MySqlCommand("INSERT INTO Order(UserID, BillingID, Password) VALUES (@UserID, @BillingID, @Status, @Date)", connection))
+                    using (MySqlCommand command = new MySqlCommand("INSERT INTO Orders(UserID, BillingID, Status, Date) VALUES " +
+                        "(@UserID, (SELECT ID FROM Billing ORDER BY ID DESC LIMIT 1), @Status, @Date)", connection))
                     {
                         command.Parameters.AddWithValue("@UserID", order.User.ID);
-                        command.Parameters.AddWithValue("@BillingID", order.Billing.ID);    
                         command.Parameters.AddWithValue("@Status", order.Status);
                         command.Parameters.AddWithValue("@Date", order.Date);
                         command.ExecuteNonQuery();
                     }
                     foreach (Product product in order.Products)
                     {
-                        using (MySqlCommand command = new MySqlCommand("INSERT INTO OrderProducts(ProductID , OrderID, Price) VALUES (@ProductID, @OrderID, @Price)", connection))
+                        using (MySqlCommand command = new MySqlCommand("INSERT INTO OrderProducts(ProductID , OrderID, Price) VALUES (@ProductID, (SELECT ID FROM Orders ORDER BY ID DESC LIMIT 1), @Price) ", connection))
                         {
                             command.Parameters.AddWithValue("@ProductID", product.ID);
-                            command.Parameters.AddWithValue("@OrderID", order.Billing.ID);
-                            command.Parameters.AddWithValue("@Price", order.Products.Sum(foundProduct => foundProduct.Price));
+                            command.Parameters.AddWithValue("@Price", product.Price);
                             command.ExecuteNonQuery();
                         }
                     }
@@ -114,13 +119,29 @@ namespace Data.Contexts
             }
             catch (Exception)
             {
-                throw new RegistrationFailedException();
+                throw;
             }
         }
 
         public void DeleteOrder(Order order)
         {
-            throw new NotImplementedException();
+            try
+            {
+                using (connection = DataConnection.getConnection())
+                {
+                    connection.Open();
+                    using (MySqlCommand command = new MySqlCommand("DELETE OrderProducts.*, Orders.* FROM OrderProducts " +
+                        "LEFT JOIN Orders ON Orders.ID = OrderProducts.OrderID WHERE OrderProducts.OrderID=@OrderID", connection))
+                    {
+                        command.Parameters.AddWithValue("@OrderID", order.ID);
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

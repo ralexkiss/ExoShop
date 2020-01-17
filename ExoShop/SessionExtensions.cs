@@ -13,6 +13,10 @@ namespace ExoShop
     {
         public static void SetObject(this ISession session, string key, object value)
         {
+            if (ContainsObject(session, key))
+            {
+                DeleteObject(session, "loggedInUser");
+            }
             session.SetString(key, JsonConvert.SerializeObject(value));
         }
 

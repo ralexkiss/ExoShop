@@ -23,7 +23,7 @@ namespace Data.Contexts
 
         public void RemoveFromCart(Product product, User user)
         {
-            user.Cart.Remove(product);
+            user.Cart.RemoveAll(foundProduct => foundProduct.ID == product.ID);
         }
     }
 }

@@ -10,9 +10,16 @@
             <h2>@product.Name</h2>
             @for (int i = 0; i < 5; i++)
             {
-                if (i < product.reviews.Average(review => review.Stars))
+                if (product.reviews.Any())
                 {
-                    <span class="fa fa-star checked"></span>
+                    if (i < product.reviews.Average(review => review.Stars))
+                    {
+                        <span class="fa fa-star checked"></span>
+                    }
+                    else
+                    {
+                        <span class="fa fa-star"></span>
+                    }
                 }
                 else
                 {
