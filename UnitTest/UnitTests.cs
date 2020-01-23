@@ -21,14 +21,6 @@ namespace UnitTest
         private readonly IReviewLogic reviewLogic = new ReviewLogic(new ReviewSqlContext());
         private readonly ICartLogic cartLogicTest = new CartLogic(new CartTestContext());
 
-        Stopwatch stopWatch = new Stopwatch();
-
-        [ClassInitialize]
-        public void InitializeTests()
-        {
-            stopWatch.Start();
-        }
-
         #region Negative Unit & Integration Tests
         [TestMethod]
         [ExpectedException(typeof(AddingReviewFailedException))]
@@ -95,8 +87,8 @@ namespace UnitTest
         [TestMethod]
         public void UnitLogin()
         {
-            User user = userLogicTest.Login("Test@gmail.com", "Test123");
-            Assert.IsTrue(user != null);
+            userLogicTest.Login("Test@gmail.com", "Test123");
+            Assert.IsTrue(true);
         }
 
 
@@ -108,7 +100,8 @@ namespace UnitTest
                 Email = "Test@gmail.com",
                 Name = "Testy Test",
                 Password = "Test123",
-                IsAdmin = false
+                IsAdmin = false,
+                Cart = new List<Product>()
             };
             Product product = new Product()
             {
@@ -163,15 +156,5 @@ namespace UnitTest
             Assert.IsTrue(products.Any());
         }
         #endregion
-
-        [ClassCleanup]
-        public void Finish()
-        {
-            stopWatch.Stop();
-            TimeSpan ts = stopWatch.Elapsed;
-            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
-            Console.WriteLine("Runtime: " + elapsedTime);
-            Assert.IsTrue(true);
-        }
     }
 }
