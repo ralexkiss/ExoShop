@@ -48,7 +48,8 @@ namespace ExoShop.Controllers
                 }
                 catch (AddingReviewFailedException)
                 {
-                    throw new AddingReviewFailedException();
+                    ModelState.AddModelError("", "Adding review failed, Try again.");
+                    return RedirectToAction("Info", "Product", new { id = id });
                 }
             }
             return RedirectToAction("Info", "Product", new { id = id });
@@ -70,7 +71,7 @@ namespace ExoShop.Controllers
             }
             catch (RemovingReviewFailedException)
             {
-                throw new RemovingReviewFailedException();
+                return RedirectToAction("Info", "Product", new { id = id });
             }
         }
     }

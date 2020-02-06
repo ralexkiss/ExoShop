@@ -15,7 +15,6 @@ namespace ExoShop.Controllers
 {
     public class ProductController : Controller
     {
-        List<Product> products = new List<Product>();
         private readonly IProductLogic productLogic;
         private readonly IReviewLogic reviewLogic;
 
@@ -23,13 +22,29 @@ namespace ExoShop.Controllers
         {
             productLogic = new ProductLogic(productContext);
             reviewLogic = new ReviewLogic(reviewContext);
+        }
 
-            products = productLogic.GetAll();
+        private List<Product> GetAllProducts()
+        {
+            List<Product> products = new List<Product>();
+            try
+            {
+                products = productLogic.GetAll();
+                foreach (Product product in products)
+                {
+                    product.reviews = reviewLogic.GetAllByProduct(product);
+                }
+                return products;
+            }
+            catch (Exception)
+            {
+                return products;
+            }
         }
 
         public IActionResult Info(int id)
         {
-            Product product = products.Find(foundProduct => foundProduct.ID == id);
+            Product product = GetAllProducts().Find(foundProduct => foundProduct.ID == id);
             if (product == null)
             {
                 return RedirectToAction("Index", "Shop");
@@ -44,7 +59,7 @@ namespace ExoShop.Controllers
             User loggedInUser = HttpContext.Session.GetUser();
             if (loggedInUser.IsAdmin)
             {
-                ViewBag.Products = products;
+                ViewBag.Products = GetAllProducts();
                 return View();
             }
             return RedirectToAction("Index", "Shop");
@@ -55,6 +70,8 @@ namespace ExoShop.Controllers
         public IActionResult EditProduct(int id, ProductViewModel model)
         {
             User loggedInUser = HttpContext.Session.GetUser();
+            Product product = GetAllProducts().Find(foundProduct => foundProduct.ID == id);
+            ViewBag.product = product;
             if (loggedInUser.IsAdmin)
             {
                 if (ModelState.IsValid)
@@ -74,7 +91,8 @@ namespace ExoShop.Controllers
                     }
                     catch (UpdatingProductFailedException)
                     {
-                        throw new UpdatingProductFailedException();
+                        ModelState.AddModelError("", "Editing product failed, Try again.");
+                        return RedirectToAction("ProductPanel", "Product");
                     }
                 }
             }
@@ -90,16 +108,20 @@ namespace ExoShop.Controllers
             {
                 try
                 {
-                    Product product = new Product
+                    Product product = GetAllProducts().Find(foundProduct => foundProduct.ID == id);
+                    if (product.reviews.Any())
                     {
-                        ID = id
-                    };
+                        foreach (Review review in product.reviews)
+                        {
+                            reviewLogic.RemoveReview(review);
+                        }
+                    }
                     productLogic.RemoveProduct(product);
                     return RedirectToAction("ProductPanel", "Product");
                 }
-                catch (RemovingProductFailedException)
+                catch (Exception)
                 {
-                    throw new RemovingProductFailedException();
+                    return RedirectToAction("ProductPanel", "Product");
                 }
             }
             return RedirectToAction("ProductPanel", "Product");
@@ -138,7 +160,8 @@ namespace ExoShop.Controllers
                     }
                     catch (AddingProductFailedException)
                     {
-                        throw new AddingProductFailedException();
+                        ModelState.AddModelError("", "Adding product failed, Try again.");
+                        return RedirectToAction("ProductPanel", "Product");
                     }
                 }
             }

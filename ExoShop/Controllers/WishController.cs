@@ -35,7 +35,7 @@ namespace ExoShop.Controllers
             }
             catch (AddingWishFailedException)
             {
-                throw new AddingWishFailedException();
+                return RedirectToAction("Index", "Shop");
             }
         }
 
@@ -53,7 +53,7 @@ namespace ExoShop.Controllers
             }
             catch (RemovingWishesFailedException)
             {
-                throw new RemovingWishesFailedException();
+                return RedirectToAction("Index", "User");
             }
         }
     }

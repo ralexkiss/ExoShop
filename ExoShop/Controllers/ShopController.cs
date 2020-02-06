@@ -15,8 +15,6 @@ namespace ExoShop.Controllers
 {
     public class ShopController : Controller
     {
-        List<Product> products = new List<Product>();
-
         private readonly IProductLogic productLogic;
         private readonly IReviewLogic reviewLogic;
         private readonly IOrderLogic orderLogic;
@@ -28,18 +26,31 @@ namespace ExoShop.Controllers
             reviewLogic = new ReviewLogic(reviewContext);
             orderLogic = new OrderLogic(orderContext);
             billingLogic = new BillingLogic(billingContext);
+        }
 
-            products = productLogic.GetAll();
-            foreach(Product product in products)
+        private List<Product> GetAllProducts()
+        {
+            List<Product> products = new List<Product>();
+            try
             {
-                product.reviews = reviewLogic.GetAllByProduct(product);
+                products = productLogic.GetAll();
+                foreach (Product product in products)
+                {
+                    product.reviews = reviewLogic.GetAllByProduct(product);
+                    return products;
+                }
             }
+            catch (Exception)
+            {
+                return products;
+            }
+            return products;
         }
 
         public IActionResult Index()
         {
             User loggedInUser = HttpContext.Session.GetUser();
-            ViewBag.Products = products;
+            ViewBag.Products = GetAllProducts();
             return String.IsNullOrEmpty(loggedInUser.Name) ? (IActionResult)RedirectToAction("SignIn", "User") : View();
         }
 
@@ -72,7 +83,8 @@ namespace ExoShop.Controllers
                 }
                 catch(Exception)
                 {
-                    throw new PaymentFailedException();
+                    ModelState.AddModelError("", "Payment failed, Try again.");
+                    return RedirectToAction("Checkout", "Shop");
                 }
             }
             return RedirectToAction("Checkout", "Shop");   

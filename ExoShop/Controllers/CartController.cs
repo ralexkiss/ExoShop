@@ -33,10 +33,17 @@ namespace ExoShop.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult AddToCart(int id)
         {
-            User loggedInUser = HttpContext.Session.GetUser();
-            cartLogic.AddToCart(productLogic.GetProductById(id),loggedInUser);
-            HttpContext.Session.UpdateUser(loggedInUser);
-            return RedirectToAction("Index", "Shop");
+            try
+            {
+                User loggedInUser = HttpContext.Session.GetUser();
+                cartLogic.AddToCart(productLogic.GetProductById(id), loggedInUser);
+                HttpContext.Session.UpdateUser(loggedInUser);
+                return RedirectToAction("Index", "Shop");
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Index", "Shop");
+            }
         }
 
 
@@ -44,10 +51,17 @@ namespace ExoShop.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult RemoveFromCart(int id)
         {
-            User loggedInUser = HttpContext.Session.GetUser();
-            cartLogic.RemoveFromCart(productLogic.GetProductById(id), loggedInUser);
-            HttpContext.Session.UpdateUser(loggedInUser);
-            return RedirectToAction("Index", "Cart");
+            try
+            {
+                User loggedInUser = HttpContext.Session.GetUser();
+                cartLogic.RemoveFromCart(productLogic.GetProductById(id), loggedInUser);
+                HttpContext.Session.UpdateUser(loggedInUser);
+                return RedirectToAction("Index", "Cart");
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Index", "Cart");
+            }
         }
     }
 }
