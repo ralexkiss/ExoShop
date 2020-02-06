@@ -37,14 +37,14 @@ namespace ExoShop.Controllers
                 foreach (Product product in products)
                 {
                     product.reviews = reviewLogic.GetAllByProduct(product);
-                    return products;
                 }
+                return products;
+
             }
             catch (Exception)
             {
                 return products;
             }
-            return products;
         }
 
         public IActionResult Index()
